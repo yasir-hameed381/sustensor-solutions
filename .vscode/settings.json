@@ -1,0 +1,4 @@
+{
+  "css.lint.unknownAtRules": "ignore",
+  "powershell.scriptAnalysis.enable": false
+}

@@ -1,0 +1,394 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Theme tokens used by the shadcn/ui components in src/components/ui. */
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-border: var(--destructive-border);
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --button-outline: rgba(17, 35, 42, 0.14);
+  --badge-outline: rgba(17, 35, 42, 0.08);
+  --elevate-1: rgba(17, 35, 42, 0.035);
+  --elevate-2: rgba(17, 35, 42, 0.08);
+  --background: 42 31% 96%;
+  --foreground: 198 25% 13%;
+  --border: 40 16% 85%;
+  --card: 42 38% 98%;
+  --card-foreground: 198 25% 13%;
+  --card-border: 40 16% 85%;
+  --sidebar: 198 25% 13%;
+  --sidebar-foreground: 42 31% 96%;
+  --sidebar-border: 198 18% 25%;
+  --sidebar-primary: 156 48% 42%;
+  --sidebar-primary-foreground: 198 25% 13%;
+  --sidebar-accent: 198 18% 25%;
+  --sidebar-accent-foreground: 42 31% 96%;
+  --sidebar-ring: 156 48% 42%;
+  --popover: 42 38% 98%;
+  --popover-foreground: 198 25% 13%;
+  --popover-border: 40 16% 85%;
+  --primary: 156 48% 42%;
+  --primary-foreground: 198 25% 13%;
+  --secondary: 194 22% 91%;
+  --secondary-foreground: 198 25% 13%;
+  --muted: 41 24% 91%;
+  --muted-foreground: 198 10% 43%;
+  --accent: 39 79% 67%;
+  --accent-foreground: 198 25% 13%;
+  --destructive: 2 58% 48%;
+  --destructive-foreground: 42 31% 96%;
+  --input: 40 16% 85%;
+  --ring: 156 48% 42%;
+  --radius: 0.75rem;
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --muted-border: hsl(var(--muted));
+  --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
+}
+
+.dark {
+  --background: 198 25% 13%;
+  --foreground: 42 31% 96%;
+  --border: 198 18% 25%;
+  --card: 198 22% 17%;
+  --card-foreground: 42 31% 96%;
+  --card-border: 198 18% 25%;
+  --sidebar: 198 25% 10%;
+  --sidebar-foreground: 42 31% 96%;
+  --sidebar-border: 198 18% 25%;
+  --popover: 198 22% 17%;
+  --popover-foreground: 42 31% 96%;
+  --popover-border: 198 18% 25%;
+  --primary: 156 48% 48%;
+  --primary-foreground: 198 25% 10%;
+  --secondary: 198 18% 25%;
+  --secondary-foreground: 42 31% 96%;
+  --muted: 198 18% 22%;
+  --muted-foreground: 40 12% 72%;
+  --accent: 39 79% 67%;
+  --accent-foreground: 198 25% 13%;
+  --input: 198 18% 25%;
+  --ring: 156 48% 48%;
+}
+
+/* Brand palette. Use these tokens (e.g. `bg-forest`, `text-emerald`) instead of raw hex values. */
+@theme {
+  --color-forest: #17343a;
+  --color-forest-2: #20464a;
+  --color-abyss: #0f2428;
+  --color-emerald: #278362;
+  --color-emerald-deep: #1f6b4f;
+  --color-mint: #a9d1b5;
+  --color-sage: #9dc7b2;
+  --color-teal: #6d9290;
+  --color-gold: #d9b66d;
+  --color-cream: #f7f4ec;
+  --color-paper: #fdfbf7;
+  --color-sand: #f4f0e7;
+  --color-mist: #e6eee8;
+  --color-mist-2: #d9e5dc;
+  --color-mist-3: #eef5f0;
+  --color-line: #ded8ca;
+  --color-line-soft: #eae6dc;
+  --color-line-green: #aac6b7;
+  --color-copy: #536467;
+  --color-copy-strong: #284850;
+  --color-copy-muted: #6a7c7b;
+  --color-on-dark: #c3d2cc;
+  --color-ivory: #f6f2e9;
+
+  --font-sans: 'Manrope', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-cream);
+    color: var(--color-forest);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Keeps anchor targets clear of the fixed 72px header. */
+  [id] {
+    scroll-margin-top: 88px;
+  }
+
+  ::selection {
+    background: var(--color-mint);
+    color: var(--color-forest);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-sage);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .grain::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    z-index: 50;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  }
+}
+
+.display {
+  font-family: var(--font-display);
+  letter-spacing: -0.055em;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+/* Header navigation */
+.nav-link {
+  color: var(--color-on-dark);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transition: color 0.2s ease;
+}
+.nav-link:hover,
+.nav-link[aria-expanded='true'] {
+  color: var(--color-mint);
+}
+
+.nav-panel {
+  position: absolute;
+  top: 100%;
+  z-index: 60;
+  border: 1px solid var(--color-line);
+  border-top: 2px solid var(--color-emerald);
+  background: var(--color-cream);
+  padding: 8px;
+  color: var(--color-forest);
+  box-shadow: 0 18px 40px -18px rgba(10, 24, 27, 0.45);
+  animation: nav-panel-in 0.16s ease-out both;
+}
+
+.nav-panel-link {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--color-copy-strong);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.nav-panel-link:hover,
+.nav-panel-link:focus-visible {
+  background: var(--color-mist);
+  color: var(--color-forest);
+}
+
+@keyframes nav-panel-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Entrance animations */
+.reveal { animation: reveal 0.75s cubic-bezier(0.22, 0.75, 0.25, 1) both; }
+.reveal-delay-1 { animation-delay: 0.1s; }
+.reveal-delay-2 { animation-delay: 0.2s; }
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.75s cubic-bezier(0.22, 0.75, 0.25, 1), transform 0.75s cubic-bezier(0.22, 0.75, 0.25, 1);
+}
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal,
+  .reveal-on-scroll,
+  .nav-panel {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* 3D business card */
+.card-3d-wrapper { perspective: 1200px; }
+
+.card-3d-inner {
+  position: relative;
+  transition: transform 0.7s cubic-bezier(0.34, 1.3, 0.64, 1);
+  transform-style: preserve-3d;
+}
+.card-3d-inner.flipped { transform: rotateY(180deg); }
+
+.card-3d-front,
+.card-3d-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-3d-back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+}
+
+/* ==========================================================================
+   Executive PDF document (A4 at 96dpi: 794 x 1123px)
+   ========================================================================== */
+
+.executive-pdf-container {
+  display: none;
+}
+
+/* html2pdf renders a clone inside its own wrapper; it must stay in normal flow or the wrapper collapses to 0px. */
+.html2pdf__container .executive-pdf-container {
+  display: block;
+  position: static;
+  width: 794px;
+  background: var(--color-cream);
+}
+
+.executive-pdf-page {
+  width: 794px;
+  height: 1120px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 30px 36px 20px;
+  background-color: var(--color-cream);
+  color: var(--color-forest);
+  break-after: page;
+}
+
+.executive-pdf-page:last-child {
+  break-after: avoid;
+}
+
+/* Business card print sheet (only rendered while printing cards) */
+.card-print-sheet {
+  display: none;
+}
+
+/* ==========================================================================
+   Printing
+   - Default: the browser print dialog prints the executive profile.
+   - `html.print-business-card`: prints only the business card sheet.
+   ========================================================================== */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  body {
+    background: var(--color-cream) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .grain::after {
+    display: none !important;
+  }
+
+  html:not(.print-business-card) #site-root {
+    display: none !important;
+  }
+
+  html:not(.print-business-card) .executive-pdf-container {
+    display: block !important;
+  }
+
+  .executive-pdf-page {
+    width: 210mm;
+    height: 297mm;
+    padding: 10mm 12mm 8mm;
+  }
+
+  html.print-business-card body {
+    background: #ffffff !important;
+  }
+
+  html.print-business-card #root {
+    display: none !important;
+  }
+
+  html.print-business-card .card-print-sheet {
+    display: flex !important;
+  }
+}

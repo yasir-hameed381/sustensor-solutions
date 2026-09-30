@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sustensor Solutions • Executive Business Card Sample</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-forest: #17343a;
+      --bg-dark-obsidian: #0d1e22;
+      --accent-emerald: #278362;
+      --accent-gold: #d9b66d;
+      --accent-mint: #a9d1b5;
+      --bg-sand: #f7f4ec;
+      --card-border-dark: #2a5b50;
+      --card-border-light: #c5d8cc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a181b;
+      color: #e6eee8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    .mono {
+      font-family: 'DM Mono', monospace;
+    }
+
+    .display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Container Header */
+    .header-bar {
+      width: 100%;
+      max-w: 960px;
+      max-width: 960px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px;
+      background: #142e32;
+      border: 1px solid #2d5952;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .header-title h1 {
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title p {
+      font-size: 12px;
+      color: #a9d1b5;
+      margin-top: 3px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #d9b66d;
+      color: #17343a;
+    }
+    .btn-primary:hover {
+      background: #c9a65d;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #17343a;
+      color: #a9d1b5;
+      border: 1px solid #2d5952;
+    }
+    .btn-secondary:hover {
+      background: #204449;
+      color: #ffffff;
+    }
+
+    /* Section Container */
+    .section-box {
+      width: 100%;
+      max-width: 960px;
+      background: #102428;
+      border: 1px solid #204449;
+      padding: 36px 30px;
+      margin-bottom: 40px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #d9b66d;
+      margin-bottom: 24px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #204449;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title span.badge {
+      font-size: 10px;
+      background: #17343a;
+      color: #a9d1b5;
+      padding: 3px 8px;
+      border: 1px solid #2d5952;
+    }
+
+    /* 3D Flip Interactive Card */
+    .flip-container {
+      perspective: 1200px;
+      margin: 20px auto;
+      cursor: pointer;
+      width: 440px;
+      height: 251px;
+    }
+
+    .flip-card {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.7s cubic-bezier(0.34, 1.3, 0.64, 1);
+      transform-style: preserve-3d;
+    }
+
+    .flip-card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 0;
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6);
+    }
+
+    .card-face-back {
+      transform: rotateY(180deg);
+    }
+
+    /* CARD STRUCTURE (Standard 3.5" x 2.0" Ratio) */
+    .business-card {
+      width: 440px;
+      height: 251px;
+      padding: 24px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    /* EDITION DARK */
+    .business-card.dark {
+      background: linear-gradient(135deg, #0c1c20 0%, #17343a 50%, #0f2428 100%);
+      color: #ffffff;
+      border: 1px solid var(--card-border-dark);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(217,182,109,0.25);
+    }
+
+    /* EDITION LIGHT */
+    .business-card.light {
+      background: linear-gradient(135deg, #ffffff 0%, #f7f4ec 50%, #eae5d8 100%);
+      color: #17343a;
+      border: 1px solid var(--card-border-light);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(39,131,98,0.2);
+    }
+
+    /* Metallic Corner Ticks */
+    .corner-tick {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+    }
+    .dark .corner-tick { border-color: rgba(217, 182, 109, 0.85); }
+    .light .corner-tick { border-color: rgba(39, 131, 98, 0.85); }
+
+    .corner-tl { top: 10px; left: 10px; border-top: 2px solid; border-left: 2px solid; }
+    .corner-tr { top: 10px; right: 10px; border-top: 2px solid; border-right: 2px solid; }
+    .corner-bl { bottom: 10px; left: 10px; border-bottom: 2px solid; border-left: 2px solid; }
+    .corner-br { bottom: 10px; right: 10px; border-bottom: 2px solid; border-right: 2px solid; }
+
+    /* Front Styles */
+    .card-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 2;
+    }
+    .card-top-row .category {
+      font-size: 8.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.24em;
+      font-weight: 600;
+    }
+    .dark .card-top-row .category { color: #d9b66d; }
+    .light .card-top-row .category { color: #278362; }
+
+    .card-top-row .location-pill {
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 2px 7px;
+      border: 1px solid;
+    }
+    .dark .card-top-row .location-pill { border-color: #2a5b50; background: rgba(12,28,32,0.6); color: #a9d1b5; }
+    .light .card-top-row .location-pill { border-color: #b5cebf; background: rgba(255,255,255,0.8); color: #17343a; }
+
+    .card-center-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: auto 0;
+      z-index: 2;
+    }
+    .card-center-brand img {
+      height: 52px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+    .brand-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .brand-wordmark .rule {
+      height: 1px;
+      width: 28px;
+    }
+    .dark .brand-wordmark .rule { background: rgba(217, 182, 109, 0.6); }
+    .light .brand-wordmark .rule { background: rgba(39, 131, 98, 0.6); }
+
+    .brand-wordmark .text {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+    }
+    .dark .brand-wordmark .text { color: #ffffff; }
+    .light .brand-wordmark .text { color: #17343a; }
+
+    .card-bottom-row {
+      text-align: center;
+      padding-top: 10px;
+      border-top: 1px dashed;
+      z-index: 2;
+    }
+    .dark .card-bottom-row { border-color: rgba(169, 209, 181, 0.25); }
+    .light .card-bottom-row { border-color: rgba(23, 52, 58, 0.2); }
+
+    .card-bottom-row p {
+      font-size: 8.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 600;
+    }
+    .dark .card-bottom-row p { color: #a9d1b5; }
+    .light .card-bottom-row p { color: #278362; }
+
+    /* Back Styles */
+    .back-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid;
+    }
+    .dark .back-header { border-color: rgba(255,255,255,0.12); }
+    .light .back-header { border-color: rgba(23,52,58,0.15); }
+
+    .back-brand {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .back-brand img {
+      height: 20px;
+      width: auto;
+    }
+    .back-brand span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .back-body {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 16px;
+      margin: auto 0;
+    }
+
+    .back-info h2 {
+      font-size: 14.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+    }
+    .back-info .title {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    .dark .back-info .title { color: #d9b66d; }
+    .light .back-info .title { color: #278362; }
+
+    .back-info .divider {
+      height: 1px;
+      width: 100%;
+      margin: 8px 0;
+    }
+    .dark .back-info .divider { background: linear-gradient(to right, rgba(217,182,109,0.7), transparent); }
+    .light .back-info .divider { background: linear-gradient(to right, rgba(39,131,98,0.7), transparent); }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 9.5px;
+      margin-bottom: 3.5px;
+    }
+    .contact-item svg {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+    }
+    .dark .contact-item svg { stroke: #a9d1b5; }
+    .light .contact-item svg { stroke: #278362; }
+
+    .back-qr {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-left: 12px;
+      border-left: 1px solid;
+    }
+    .dark .back-qr { border-color: rgba(255,255,255,0.12); }
+    .light .back-qr { border-color: rgba(23,52,58,0.15); }
+
+    .qr-frame {
+      padding: 6px;
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dark .qr-frame { background: #0a181b; border-color: rgba(39,131,98,0.5); color: #d9b66d; }
+    .light .qr-frame { background: #ffffff; border-color: #aac6b7; color: #17343a; }
+
+    .qr-frame svg {
+      width: 60px;
+      height: 60px;
+    }
+
+    .qr-caption {
+      font-size: 7px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      margin-top: 4px;
+    }
+    .dark .qr-caption { color: #d9b66d; }
+    .light .qr-caption { color: #278362; }
+
+    .back-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid;
+      font-size: 7.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+    .dark .back-footer { border-color: rgba(255,255,255,0.12); color: #a9d1b5; }
+    .light .back-footer { border-color: rgba(23,52,58,0.15); color: #278362; }
+
+    /* Side-by-Side Flex */
+    .side-by-side-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #d9b66d;
+      font-weight: 700;
+    }
+
+    /* PRINT STYLESHEET */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .header-bar,
+      .section-title,
+      .flip-section,
+      .no-print {
+        display: none !important;
+      }
+
+      .section-box {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+
+      .side-by-side-grid {
+        display: block !important;
+      }
+
+      .card-wrapper {
+        margin-bottom: 20mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .card-label {
+        color: #000000 !important;
+        margin-bottom: 5mm !important;
+      }
+
+      .business-card {
+        width: 3.5in !important;
+        height: 2.0in !important;
+        box-shadow: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header class="header-bar">
+    <div class="header-title">
+      <h1>
+        <span>Sustensor Solutions</span>
+        <span style="color: #d9b66d;">•</span>
+        <span style="font-weight: 500; font-size: 14px;">Executive Business Card</span>
+      </h1>
+      <p class="mono">Commercial Standard: 3.5&quot; × 2.0&quot; (88.9mm × 50.8mm) • Vector Print Specification</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+        <span>Print Card Specimen</span>
+      </button>
+      <a class="btn btn-secondary" href="https://wa.me/966570786381" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span>WhatsApp Direct</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Section 1: 3D Interactive Flip Card -->
+  <section class="section-box flip-section">
+    <div class="section-title">
+      <span>Interactive 3D Preview (Click Card to Flip)</span>
+      <span class="badge mono">Touch or Click Active</span>
+    </div>
+
+    <div class="flip-container" onclick="this.querySelector('.flip-card').classList.toggle('is-flipped')">
+      <div class="flip-card">
+        <!-- FRONT -->
+        <div class="card-face">
+          <div class="business-card dark">
+            <div class="corner-tick corner-tl"></div>
+            <div class="corner-tick corner-tr"></div>
+            <div class="corner-tick corner-bl"></div>
+            <div class="corner-tick corner-br"></div>
+
+            <div class="card-top-row">
+              <span class="category mono">Executive Advisory</span>
+              <span class="location-pill mono">KSA • GCC</span>
+            </div>
+
+            <div class="card-center-brand">
+              <img src="artifacts/sustensor-profile/public/sustensor-logo.png" alt="Sustensor Logo" />
+              <div class="brand-wordmark">
+                <div class="rule"></div>
+                <span class="text mono">Sustensor Solutions</span>
+                <div class="rule"></div>
+              </div>
+            </div>
+
+            <div class="card-bottom-row">
+              <p class="mono">Enterprise Governance • CIPS Procurement • Carbon Accounting</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BACK -->
+        <div class="card-face card-face-back">
+          <div class="business-card dark">
+            <div class="back-header">
+              <div class="back-brand">
+                <img src="artifacts/sustensor-profile/public/sustensor-logo.png" alt="Sustensor" />
+                <span class="display">Sustensor Solutions</span>
+              </div>
+              <span class="location-pill mono">Riyadh, KSA</span>
+            </div>
+
+            <div class="back-body">
+              <div class="back-info">
+                <h2 class="display">Executive Leadership</h2>
+                <div class="title mono">Founder &amp; Managing Director</div>
+                <div class="divider"></div>
+
+                <div class="contact-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  <span style="font-weight: 700;">+966 57 078 6381</span>
+                </div>
+
+                <div class="contact-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <span class="mono" style="font-size: 8.5px; opacity: 0.9;">sustensor.solutions@gmail.com</span>
+                </div>
+
+                <div class="contact-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span style="opacity: 0.85;">Riyadh, Kingdom of Saudi Arabia</span>
+                </div>
+              </div>
+
+              <div class="back-qr">
+                <div class="qr-frame">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" shape-rendering="crispEdges">
+                    <path fill="none" d="M0 0h25v25H0z"/>
+                    <path stroke="currentColor" d="M0 0.5h7m2 0h1m3 0h1m1 0h1m2 0h7M0 1.5h1m5 0h1m2 0h1m2 0h3m3 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h6m2 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h2m1 0h2m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h1m1 0h1m3 0h1M0 8.5h1m1 0h5m2 0h1m1 0h1m1 0h1m1 0h2m1 0h5M0 9.5h1m1 0h1m5 0h1m1 0h2m7 0h1m3 0h1M0 10.5h1m1 0h2m2 0h4m2 0h1m1 0h2m2 0h4m1 0h2M2 11.5h1m2 0h1m3 0h7m1 0h3m4 0h1M0 12.5h1m1 0h3m1 0h1m1 0h1m3 0h5m1 0h3m1 0h3M0 13.5h1m2 0h1m3 0h2m5 0h2m3 0h1m1 0h1m1 0h1M0 14.5h1m1 0h1m3 0h1m3 0h3m1 0h4m1 0h3m1 0h2M0 15.5h1m1 0h1m1 0h1m2 0h1m1 0h3m4 0h1m2 0h2m3 0h1M0 16.5h1m1 0h8m1 0h1m4 0h5m1 0h1M8 17.5h2m2 0h2m1 0h2m3 0h2M0 18.5h7m2 0h2m2 0h2m1 0h1m1 0h1m1 0h1m1 0h3M0 19.5h1m5 0h1m1 0h2m2 0h2m1 0h2m3 0h2M0 20.5h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h7m1 0h2M0 21.5h1m1 0h3m1 0h1m1 0h1m1 0h1m6 0h2m1 0h3m1 0h1M0 22.5h1m1 0h3m1 0h1m1 0h5m8 0h2m1 0h1M0 23.5h1m5 0h1m2 0h1m1 0h1m2 0h4m1 0h3m2 0h1M0 24.5h7m1 0h2m1 0h1m5 0h8"/>
+                  </svg>
+                </div>
+                <span class="qr-caption mono">Direct WhatsApp</span>
+              </div>
+            </div>
+
+            <div class="back-footer mono">
+              <span>Scope 3 GHG • CIPS Procurement</span>
+              <span>Corporate Advisory Desk</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="mono" style="text-align: center; font-size: 11px; color: #a9d1b5; margin-top: 15px;">
+      ↻ Click card above to rotate and preview Front / Back
+    </p>
+  </section>
+
+  <!-- Section 2: Edition A - Dark Obsidian & Gold Foil (Side by Side) -->
+  <section class="section-box">
+    <div class="section-title">
+      <span>Edition A: Dark Obsidian &amp; Warm Gold (Print Sheet)</span>
+      <span class="badge mono">Commercial Luxury Finish</span>
+    </div>
+
+    <div class="side-by-side-grid">
+      <!-- FRONT -->
+      <div class="card-wrapper">
+        <span class="card-label mono">Front Face</span>
+        <div class="business-card dark">
+          <div class="corner-tick corner-tl"></div>
+          <div class="corner-tick corner-tr"></div>
+          <div class="corner-tick corner-bl"></div>
+          <div class="corner-tick corner-br"></div>
+
+          <div class="card-top-row">
+            <span class="category mono">Executive Advisory</span>
+            <span class="location-pill mono">KSA • GCC</span>
+          </div>
+
+          <div class="card-center-brand">
+            <img src="artifacts/sustensor-profile/public/sustensor-logo.png" alt="Sustensor Logo" />
+            <div class="brand-wordmark">
+              <div class="rule"></div>
+              <span class="text mono">Sustensor Solutions</span>
+              <div class="rule"></div>
+            </div>
+          </div>
+
+          <div class="card-bottom-row">
+            <p class="mono">Enterprise Governance • CIPS Procurement • Carbon Accounting</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACK -->
+      <div class="card-wrapper">
+        <span class="card-label mono">Back Face</span>
+        <div class="business-card dark">
+          <div class="back-header">
+            <div class="back-brand">
+              <img src="artifacts/sustensor-profile/public/sustensor-logo.png" alt="Sustensor" />
+              <span class="display">Sustensor Solutions</span>
+            </div>
+            <span class="location-pill mono">Riyadh, KSA</span>
+          </div>
+
+          <div class="back-body">
+            <div class="back-info">
+              <h2 class="display">Executive Leadership</h2>
+              <div class="title mono">Founder &amp; Managing Director</div>
+              <div class="divider"></div>
+
+              <div class="contact-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <span style="font-weight: 700;">+966 57 078 6381</span>
+              </div>
+
+              <div class="contact-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span class="mono" style="font-size: 8.5px; opacity: 0.9;">sustensor.solutions@gmail.com</span>
+              </div>
+
+              <div class="contact-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span style="opacity: 0.85;">Riyadh, Kingdom of Saudi Arabia</span>
+              </div>
+            </div>
+
+            <div class="back-qr">
+              <div class="qr-frame">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" shape-rendering="crispEdges">
+                  <path fill="none" d="M0 0h25v25H0z"/>
+                  <path stroke="currentColor" d="M0 0.5h7m2 0h1m3 0h1m1 0h1m2 0h7M0 1.5h1m5 0h1m2 0h1m2 0h3m3 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h6m2 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h2m1 0h2m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h1m1 0h1m3 0h1M0 8.5h1m1 0h5m2 0h1m1 0h1m1 0h1m1 0h2m1 0h5M0 9.5h1m1 0h1m5 0h1m1 0h2m7 0h1m3 0h1M0 10.5h1m1 0h2m2 0h4m2 0h1m1 0h2m2 0h4m1 0h2M2 11.5h1m2 0h1m3 0h7m1 0h3m4 0h1M0 12.5h1m1 0h3m1 0h1m1 0h1m3 0h5m1 0h3m1 0h3M0 13.5h1m2 0h1m3 0h2m5 0h2m3 0h1m1 0h1m1 0h1M0 14.5h1m1 0h1m3 0h1m3 0h3m1 0h4m1 0h3m1 0h2M0 15.5h1m1 0h1m1 0h1m2 0h1m1 0h3m4 0h1m2 0h2m3 0h1M0 16.5h1m1 0h8m1 0h1m4 0h5m1 0h1M8 17.5h2m2 0h2m1 0h2m3 0h2M0 18.5h7m2 0h2m2 0h2m1 0h1m1 0h1m1 0h1m1 0h3M0 19.5h1m5 0h1m1 0h2m2 0h2m1 0h2m3 0h2M0 20.5h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h7m1 0h2M0 21.5h1m1 0h3m1 0h1m1 0h1m1 0h1m6 0h2m1 0h3m1 0h1M0 22.5h1m1 0h3m1 0h1m1 0h5m8 0h2m1 0h1M0 23.5h1m5 0h1m2 0h1m1 0h1m2 0h4m1 0h3m2 0h1M0 24.5h7m1 0h2m1 0h1m5 0h8"/>
+                </svg>
+              </div>
+              <span class="qr-caption mono">Direct WhatsApp</span>
+            </div>
+          </div>
+
+          <div class="back-footer mono">
+            <span>Scope 3 GHG • CIPS Procurement</span>
+            <span>Corporate Advisory Desk</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Edition B - Alabaster Sand & Forest Green -->
+  <section class="section-box">
+    <div class="section-title">
+      <span>Edition B: Alabaster Sand &amp; Forest Green (Print Sheet)</span>
+      <span class="badge mono">Architectural Minimalist Finish</span>
+    </div>
+
+    <div class="side-by-side-grid">
+      <!-- FRONT -->
+      <div class="card-wrapper">
+        <span class="card-label mono">Front Face</span>
+        <div class="business-card light">
+          <div class="corner-tick corner-tl"></div>
+          <div class="corner-tick corner-tr"></div>
+          <div class="corner-tick corner-bl"></div>
+          <div class="corner-tick corner-br"></div>
+
+          <div class="card-top-row">
+            <span class="category mono">Executive Advisory</span>
+            <span class="location-pill mono">KSA • GCC</span>
+          </div>
+
+          <div class="card-center-brand">
+            <img src="artifacts/sustensor-profile/public/sustensor-logo-on-light.png" alt="Sustensor Logo" />
+            <div class="brand-wordmark">
+              <div class="rule"></div>
+              <span class="text mono">Sustensor Solutions</span>
+              <div class="rule"></div>
+            </div>
+          </div>
+
+          <div class="card-bottom-row">
+            <p class="mono">Enterprise Governance • CIPS Procurement • Carbon Accounting</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACK -->
+      <div class="card-wrapper">
+        <span class="card-label mono">Back Face</span>
+        <div class="business-card light">
+          <div class="back-header">
+            <div class="back-brand">
+              <img src="artifacts/sustensor-profile/public/sustensor-logo-on-light.png" alt="Sustensor" />
+              <span class="display">Sustensor Solutions</span>
+            </div>
+            <span class="location-pill mono">Riyadh, KSA</span>
+          </div>
+
+          <div class="back-body">
+            <div class="back-info">
+              <h2 class="display">Executive Leadership</h2>
+              <div class="title mono">Founder &amp; Managing Director</div>
+              <div class="divider"></div>
+
+              <div class="contact-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <span style="font-weight: 700;">+966 57 078 6381</span>
+              </div>
+
+              <div class="contact-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span class="mono" style="font-size: 8.5px; opacity: 0.9;">sustensor.solutions@gmail.com</span>
+              </div>
+
+              <div class="contact-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span style="opacity: 0.85;">Riyadh, Kingdom of Saudi Arabia</span>
+              </div>
+            </div>
+
+            <div class="back-qr">
+              <div class="qr-frame">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" shape-rendering="crispEdges">
+                  <path fill="none" d="M0 0h25v25H0z"/>
+                  <path stroke="currentColor" d="M0 0.5h7m2 0h1m3 0h1m1 0h1m2 0h7M0 1.5h1m5 0h1m2 0h1m2 0h3m3 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h6m2 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h2m1 0h2m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h1m1 0h1m3 0h1M0 8.5h1m1 0h5m2 0h1m1 0h1m1 0h1m1 0h2m1 0h5M0 9.5h1m1 0h1m5 0h1m1 0h2m7 0h1m3 0h1M0 10.5h1m1 0h2m2 0h4m2 0h1m1 0h2m2 0h4m1 0h2M2 11.5h1m2 0h1m3 0h7m1 0h3m4 0h1M0 12.5h1m1 0h3m1 0h1m1 0h1m3 0h5m1 0h3m1 0h3M0 13.5h1m2 0h1m3 0h2m5 0h2m3 0h1m1 0h1m1 0h1M0 14.5h1m1 0h1m3 0h1m3 0h3m1 0h4m1 0h3m1 0h2M0 15.5h1m1 0h1m1 0h1m2 0h1m1 0h3m4 0h1m2 0h2m3 0h1M0 16.5h1m1 0h8m1 0h1m4 0h5m1 0h1M8 17.5h2m2 0h2m1 0h2m3 0h2M0 18.5h7m2 0h2m2 0h2m1 0h1m1 0h1m1 0h1m1 0h3M0 19.5h1m5 0h1m1 0h2m2 0h2m1 0h2m3 0h2M0 20.5h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h7m1 0h2M0 21.5h1m1 0h3m1 0h1m1 0h1m1 0h1m6 0h2m1 0h3m1 0h1M0 22.5h1m1 0h3m1 0h1m1 0h5m8 0h2m1 0h1M0 23.5h1m5 0h1m2 0h1m1 0h1m2 0h4m1 0h3m2 0h1M0 24.5h7m1 0h2m1 0h1m5 0h8"/>
+                </svg>
+              </div>
+              <span class="qr-caption mono">Direct WhatsApp</span>
+            </div>
+          </div>
+
+          <div class="back-footer mono">
+            <span>Scope 3 GHG • CIPS Procurement</span>
+            <span>Corporate Advisory Desk</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

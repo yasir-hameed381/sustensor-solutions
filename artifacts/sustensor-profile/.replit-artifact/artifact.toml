@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Sustensor Solutions Profile"
+description = "A premium interactive digital profile for Sustensor Solutions, presenting its sustainability, procurement, digitization, and applied AI advisory capabilities to government-backed startups and listed companies across Saudi Arabia and the Middle East."
+version = "1.0.0"
+id = "artifacts/sustensor-profile"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24424
+
+[services.development]
+run = "pnpm --filter @workspace/sustensor-profile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/sustensor-profile", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/sustensor-profile/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24424"
+BASE_PATH = "/"
