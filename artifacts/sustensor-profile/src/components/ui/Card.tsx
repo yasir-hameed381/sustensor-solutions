@@ -1,82 +1,37 @@
-import * as React from 'react';
+import type { ElementType, ReactNode } from 'react';
+
 import { cn } from '@/lib/utils';
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'rounded-xl border bg-card text-card-foreground shadow',
-      className,
-    )}
-    {...props}
-  />
-));
-Card.displayName = 'Card';
+import { useTone } from './tone';
 
-const CardHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('flex flex-col space-y-1.5 p-6', className)}
-    {...props}
-  />
-));
-CardHeader.displayName = 'CardHeader';
+interface CardProps {
+  as?: ElementType;
+  /** Adds a lift + border highlight on hover. */
+  interactive?: boolean;
+  padding?: 'sm' | 'md' | 'lg';
+  className?: string;
+  id?: string;
+  children: ReactNode;
+}
 
-const CardTitle = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('font-semibold leading-none tracking-tight', className)}
-    {...props}
-  />
-));
-CardTitle.displayName = 'CardTitle';
+const PADDING = { sm: 'p-5', md: 'p-6 sm:p-7', lg: 'p-6 sm:p-8 lg:p-10' } as const;
 
-const CardDescription = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('text-sm text-muted-foreground', className)}
-    {...props}
-  />
-));
-CardDescription.displayName = 'CardDescription';
-
-const CardContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
-));
-CardContent.displayName = 'CardContent';
-
-const CardFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('flex items-center p-6 pt-0', className)}
-    {...props}
-  />
-));
-CardFooter.displayName = 'CardFooter';
-
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
-  CardContent,
-};
+export function Card({ as: Tag = 'div', interactive = false, padding = 'md', className, id, children }: CardProps) {
+  const inverse = useTone() === 'inverse';
+  return (
+    <Tag
+      id={id}
+      className={cn(
+        'relative rounded-xl border',
+        inverse ? 'border-hairline-inverse bg-white/4' : 'border-hairline bg-surface shadow-xs',
+        interactive &&
+          'group transition-[transform,box-shadow,border-color,background-color] duration-(--duration-base) ease-out-soft hover:-translate-y-0.5',
+        interactive && (inverse ? 'spotlight spotlight-inverse hover:bg-white/6' : 'spotlight hover:shadow-md'),
+        PADDING[padding],
+        className,
+      )}
+    >
+      {children}
+    </Tag>
+  );
+}

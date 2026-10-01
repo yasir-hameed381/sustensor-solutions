@@ -2,6 +2,7 @@
 export const SECTION_IDS = {
   about: 'about',
   realityCheck: 'reality-check',
+  workflows: 'workflows',
   solutions: 'solutions',
   sectors: 'sectors',
   capabilities: 'capabilities',
@@ -15,3 +16,5 @@ export const SECTION_IDS = {
 } as const;
 
 export const sectorAnchorId = (sectorId: string) => `sector-${sectorId}`;
+
+export const disciplineAnchorId = (disciplineId: string) => `capability-${disciplineId}`;

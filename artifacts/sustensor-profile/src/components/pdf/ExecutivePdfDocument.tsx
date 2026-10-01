@@ -20,17 +20,21 @@ interface PdfPage {
   content: ReactNode;
 }
 
+// Look solutions up by id so adding or removing one never shifts the PDF pages.
+const solutionsById = (...ids: string[]) =>
+  ids.map((id) => solutions.find((solution) => solution.id === id)).filter((solution): solution is Solution => Boolean(solution));
+
 export function ExecutivePdfDocument({ ref }: { ref?: Ref<HTMLDivElement> }) {
   const pages: PdfPage[] = [
     { title: 'Executive Overview', content: <OverviewPage /> },
     { title: 'The Integrated Architecture', content: <ArchitecturePage /> },
     {
       title: 'Solutions (Part I)',
-      content: <SolutionsPage label="Solutions — Part I" heading="Vendor Lifecycle & Contract Sustainability" items={solutions.slice(0, 2)} />,
+      content: <SolutionsPage label="Solutions — Part I" heading="Vendor Lifecycle & Contract Sustainability" items={solutionsById('vendor-management', 'contract-sustainability')} />,
     },
     {
       title: 'Solutions (Part II)',
-      content: <SolutionsPage label="Solutions — Part II" heading="ESG Reporting & Procure-to-Pay" items={solutions.slice(2, 4)} />,
+      content: <SolutionsPage label="Solutions — Part II" heading="Procure-to-Pay Automation" items={solutionsById('procure-to-pay')} />,
     },
     { title: 'Planning & Sectors', content: <PlanningAndSectorsPage /> },
     { title: 'Team & Contact', content: <TeamAndContactPage /> },
@@ -105,7 +109,7 @@ function OverviewPage() {
     <>
       <div className="flex items-center gap-5">
         <img src={company.logo.onLight} alt="" className="h-14 w-auto object-contain" />
-        <h1 className="display text-[27px] font-bold uppercase leading-none text-forest">Corporate Capability Profile</h1>
+        <p className="display text-[27px] font-bold uppercase leading-none text-forest">Corporate Capability Profile</p>
       </div>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border border-line-green bg-mist p-3">
@@ -290,7 +294,7 @@ function PdfSolutionCard({ solution }: { solution: Solution }) {
 }
 
 function PlanningAndSectorsPage() {
-  const planning = solutions[4];
+  const [planning] = solutionsById('annual-procurement-planning');
   return (
     <>
       <PageIntro label="Solutions — Part III" heading="Annual Procurement Planning" />

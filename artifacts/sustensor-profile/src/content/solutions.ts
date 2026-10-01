@@ -1,6 +1,5 @@
 import {
   Award,
-  BookOpenCheck,
   CalendarCheck,
   ChartLine,
   ChartNoAxesGantt,
@@ -9,9 +8,7 @@ import {
   CircleCheck,
   ClipboardCheck,
   ClipboardList,
-  Database,
   Earth,
-  FileChartColumn,
   FilePenLine,
   Files,
   FolderArchive,
@@ -22,14 +19,11 @@ import {
   LayoutDashboard,
   Leaf,
   MapPin,
-  Network,
   Package,
   Receipt,
   RefreshCw,
   ScanSearch,
-  SearchCheck,
   ShieldCheck,
-  Stamp,
   Telescope,
   TrendingUp,
   UserSearch,
@@ -151,63 +145,8 @@ export const solutions: Solution[] = [
     ],
   },
   {
-    id: 'esg-reporting',
-    number: '03',
-    title: 'Sustainability / ESG Reporting',
-    menuLabel: 'Sustainability / ESG Reporting',
-    badge: 'Audit-Grade Disclosure Engine',
-    subtitle: 'Institutional-Grade Carbon Intelligence & Non-Financial Filings',
-    summary:
-      'Evolving regulatory frameworks—including CSRD (ESRS), ISSB (IFRS S1/S2), and regional capital market guidelines—demand verifiable data integrity. Our reporting engine unifies transactional procurement records, verified carbon accounting, and double materiality assessments into investor-ready, audit-defensible reporting rooms.',
-    process: [
-      { title: 'Data Collection & Aggregation', detail: 'ERP · Invoices · Supplier inputs', icon: Database, accent: Network },
-      { title: 'Global Framework Alignment', detail: 'GRI · SASB · ISSB', icon: BookOpenCheck, accent: Earth },
-      { title: 'Verification & Audit Readiness', detail: 'Evidence trails · Assurance support', icon: SearchCheck, accent: Stamp },
-      { title: 'Comprehensive ESG Disclosure', detail: 'Reports · Dashboards · Data rooms', icon: FileChartColumn, accent: ChartPie },
-    ],
-    deliverables: [
-      {
-        area: 'Automated GHG Accounting (Scope 1–3)',
-        scope:
-          'Dynamic activity- and spend-based emission calculation engines mapped to GHG Protocol and regional emission factor databases.',
-        impact: 'Substantially compresses annual ESG reporting and audit cycles with complete calculation traceability.',
-      },
-      {
-        area: 'Double Materiality & Regulatory Compliance',
-        scope: 'Automated CSRD (ESRS) and ISSB alignment tracking financial materiality alongside ecological and social impacts.',
-        impact: 'Guarantees zero compliance blind spots for sovereign wealth funds, institutional investors, and regulators.',
-      },
-      {
-        area: 'Third-Party Rating Harmonisation',
-        scope:
-          'Integrated benchmarking data pipelines aligned with EcoVadis, CDP, S&P Global, and regional stock exchange ESG registries.',
-        impact: 'Measurably elevates institutional ESG standing and benchmark positions within the first reporting cycle.',
-      },
-      {
-        area: 'Executive & Investor Data Rooms',
-        scope:
-          'Real-time board dashboards, decarbonisation scenario modelling, and automated generation of verified investor ESG data rooms.',
-        impact: 'Accelerates sustainability-linked debt financing and lowers corporate cost of capital.',
-      },
-    ],
-    pillars: [
-      {
-        label: 'Audit-Verified Traceability',
-        detail: 'Every calculated emission figure links back to transactional invoices and verified supplier inputs.',
-      },
-      {
-        label: 'Multi-Framework Interoperability',
-        detail: 'Single data entry point outputs compliant filings for CSRD, GRI, ISSB, and regional mandates.',
-      },
-      {
-        label: 'Decarbonisation Forecasting',
-        detail: 'Predictive models simulate the financial and carbon impact of prospective procurement decisions.',
-      },
-    ],
-  },
-  {
     id: 'procure-to-pay',
-    number: '04',
+    number: '03',
     title: 'Procure-to-Pay (P2P) Automation',
     menuLabel: 'Procure-to-Pay (P2P) Automation',
     badge: 'Closed-Loop Cloud Platform',
@@ -263,7 +202,7 @@ export const solutions: Solution[] = [
   // TODO (PLACEHOLDER): summary, deliverables, and pillars below are drafted from the APP process diagram; replace with final copy.
   {
     id: 'annual-procurement-planning',
-    number: '05',
+    number: '04',
     title: 'Annual Procurement Planning (APP)',
     menuLabel: 'Annual Procurement Planning',
     badge: 'Budget-Aligned Planning Cycle',
@@ -324,7 +263,6 @@ export const solutions: Solution[] = [
 
 /** Order of items in the header's Solutions menu (as specified in the revision brief). */
 export const solutionMenuOrder = [
-  'esg-reporting',
   'contract-sustainability',
   'vendor-management',
   'procure-to-pay',

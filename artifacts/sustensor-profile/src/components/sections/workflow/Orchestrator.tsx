@@ -1,0 +1,438 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ArrowRight, CheckCircle2, CircleDashed, FileCheck2, Pause, Play, PlugZap, type LucideIcon } from 'lucide-react';
+
+import { solutions } from '@/content/solutions';
+import type { Solution } from '@/content/types';
+import { prefersReducedMotion, useInView } from '@/hooks/useInView';
+import { cn } from '@/lib/utils';
+
+/*
+ * Orchestration demo modelled on zip.com/products/intake-to-procure:
+ *  - the greeting starts centred, then slides up while the options stagger in;
+ *  - a single white highlight slides to the selected workflow;
+ *  - the canvas cross-fades in (header card, ERP chips, a branching graph);
+ *  - a warm glow travels node to node, pills flip "Ready to start" → "Completed";
+ *  - the wide graph pans slowly sideways; at the end the canvas dims and the next workflow loads.
+ * Every label comes from content/solutions.ts.
+ */
+
+// ERP connectors named in the P2P deliverables copy.
+const ERP_CHIPS = ['SAP S/4HANA', 'Oracle Cloud ERP', 'Microsoft Dynamics 365'];
+
+const INTRO_MS = 1300; // greeting centred before it slides up
+const ENTER_MS = 700; // canvas fade-in before the first node runs
+const STAGE_MS = 1000; // time per stage of the graph
+const HOLD_MS = 2200; // pause on the finished graph
+const LEAVE_MS = 450; // dim before switching workflow
+
+// Stages: the four process steps, then the deliverables together (the fan-out).
+const STAGES = 5;
+
+type Phase = 'intro' | 'enter' | 'run' | 'hold' | 'leave';
+
+export function Orchestrator() {
+  const reduced = useRef(false);
+  const [phase, setPhase] = useState<Phase>('intro');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [stage, setStage] = useState(-1); // -1: nothing running yet; STAGES: all complete
+  // autoplay: advance to the next workflow after each one finishes.
+  // paused: freeze everything mid-run (set by "Pause tour").
+  const [autoplay, setAutoplay] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const [animated, setAnimated] = useState(true);
+  const [ref, inView] = useInView<HTMLDivElement>('-15% 0px');
+  const solution = solutions[activeIndex];
+
+  useEffect(() => {
+    reduced.current = prefersReducedMotion();
+    if (reduced.current) {
+      setAnimated(false);
+      setPhase('hold');
+      setStage(STAGES);
+      setAutoplay(false);
+    }
+  }, []);
+
+  // The timeline. Only advances while the demo is on screen.
+  useEffect(() => {
+    if (!inView || paused || reduced.current) return;
+    let delay: number | undefined;
+    let next: () => void = () => {};
+
+    if (phase === 'intro') {
+      delay = INTRO_MS;
+      next = () => setPhase('enter');
+    } else if (phase === 'enter') {
+      delay = ENTER_MS;
+      next = () => {
+        setStage(0);
+        setPhase('run');
+      };
+    } else if (phase === 'run') {
+      delay = STAGE_MS;
+      next = () => {
+        if (stage + 1 >= STAGES) {
+          setStage(STAGES);
+          setPhase('hold');
+        } else setStage(stage + 1);
+      };
+    } else if (phase === 'hold' && autoplay) {
+      delay = HOLD_MS;
+      next = () => setPhase('leave');
+    } else if (phase === 'leave') {
+      delay = LEAVE_MS;
+      next = () => {
+        setActiveIndex((index) => (index + 1) % solutions.length);
+        setStage(-1);
+        setPhase('enter');
+      };
+    }
+    if (delay === undefined) return;
+    const timer = window.setTimeout(next, delay);
+    return () => window.clearTimeout(timer);
+  }, [inView, paused, phase, stage, autoplay]);
+
+  const playing = autoplay && !paused;
+  const togglePlaying = () => {
+    setPaused(playing);
+    setAutoplay(!playing);
+  };
+
+  // Picking a workflow runs that one to the end, then stays on it.
+  const choose = (index: number) => {
+    setPaused(false);
+    setAutoplay(false);
+    setActiveIndex(index);
+    if (reduced.current) return;
+    setStage(-1);
+    setPhase('enter');
+  };
+
+  const introDone = phase !== 'intro';
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'overflow-hidden rounded-2xl border border-hairline bg-ink-900 shadow-lg lg:grid lg:grid-cols-12',
+        // Freeze CSS animations (spinners, glows) along with the timeline.
+        paused && '[&_*]:[animation-play-state:paused]',
+      )}
+    >
+      <IntakePanel
+        activeIndex={activeIndex}
+        introDone={introDone}
+        playing={playing}
+        showTourControl={animated}
+        onChoose={choose}
+        onTogglePlaying={togglePlaying}
+      />
+      <Canvas
+        solution={solution}
+        stage={stage}
+        visible={introDone && phase !== 'leave'}
+        panning={phase === 'run' || phase === 'hold'}
+        paused={paused}
+      />
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- Intake panel (left) */
+
+interface IntakePanelProps {
+  activeIndex: number;
+  introDone: boolean;
+  playing: boolean;
+  /** Hidden for reduced motion, where nothing animates. */
+  showTourControl: boolean;
+  onChoose: (index: number) => void;
+  onTogglePlaying: () => void;
+}
+
+function IntakePanel({ activeIndex, introDone, playing, showTourControl, onChoose, onTogglePlaying }: IntakePanelProps) {
+  const listRef = useRef<HTMLUListElement>(null);
+  const [highlight, setHighlight] = useState({ top: 0, height: 0 });
+
+  // Position the sliding white highlight behind the selected option.
+  useLayoutEffect(() => {
+    const update = () => {
+      // children[0] is the highlight itself, so options start at index 1.
+      const item = listRef.current?.children[activeIndex + 1] as HTMLElement | undefined;
+      if (item) setHighlight({ top: item.offsetTop, height: item.offsetHeight });
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    if (listRef.current) observer.observe(listRef.current);
+    return () => observer.disconnect();
+  }, [activeIndex]);
+
+  return (
+    <div className="relative flex min-h-96 flex-col p-6 text-fg-inverse sm:p-8 lg:col-span-4 lg:min-h-128">
+      {/* Greeting: centred during the intro, then slides to the top. */}
+      <div className={cn('transition-transform duration-700 ease-out-soft', introDone ? 'translate-y-0' : 'translate-y-36')}>
+        <p className="text-h4 text-fg-inverse">Hi, which workflow should we run?</p>
+        <p className="mt-1 text-caption text-fg-inverse-subtle">Pick a solution to watch it run end to end.</p>
+      </div>
+
+      <ul ref={listRef} className="relative mt-6 space-y-2" aria-label="Workflows">
+        {/* Sliding highlight */}
+        <li
+          aria-hidden="true"
+          className={cn(
+            'absolute inset-x-0 top-0 m-0! rounded-md bg-surface shadow-md transition-[transform,height,opacity] duration-500 ease-out-soft',
+            introDone ? 'opacity-100' : 'opacity-0',
+          )}
+          style={{ transform: `translateY(${highlight.top}px)`, height: highlight.height }}
+        />
+        {solutions.map((item, index) => {
+          const isActive = index === activeIndex;
+          return (
+            <li
+              key={item.id}
+              className={cn('relative transition-[opacity,transform] duration-500 ease-out-soft', introDone ? 'opacity-100' : 'translate-y-2 opacity-0')}
+              style={{ transitionDelay: introDone ? `${150 + index * 70}ms` : '0ms' }}
+            >
+              <button
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => onChoose(index)}
+                className={cn(
+                  'flex min-h-11 w-full items-center justify-between gap-3 rounded-md border px-3.5 py-2.5 text-left text-small transition-colors duration-500',
+                  isActive
+                    ? 'border-transparent font-semibold text-fg'
+                    : 'border-hairline-inverse text-fg-inverse-muted hover:border-hairline-inverse-strong hover:text-fg-inverse',
+                )}
+              >
+                {item.menuLabel}
+                <ArrowRight
+                  aria-hidden="true"
+                  className={cn('size-4 shrink-0 transition-[opacity,transform] duration-500', isActive ? 'text-accent-600 opacity-100' : '-translate-x-1 opacity-0')}
+                />
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      {showTourControl && (
+        <button
+          type="button"
+          onClick={onTogglePlaying}
+          className="mt-auto inline-flex min-h-11 items-center gap-2 self-start rounded-full px-3 pt-4 text-caption font-semibold text-accent-300 hover:text-fg-inverse"
+        >
+          {playing ? <Pause aria-hidden="true" className="size-3.5" /> : <Play aria-hidden="true" className="size-3.5" />}
+          {playing ? 'Pause tour' : 'Play tour'}
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- Canvas (right) */
+
+type NodeState = 'ready' | 'active' | 'done';
+const nodeState = (nodeStage: number, stage: number): NodeState => (stage < nodeStage ? 'ready' : stage === nodeStage ? 'active' : 'done');
+
+interface CanvasProps {
+  solution: Solution;
+  stage: number;
+  visible: boolean;
+  panning: boolean;
+  paused: boolean;
+}
+
+function Canvas({ solution, stage, visible, panning, paused }: CanvasProps) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [pan, setPan] = useState(0);
+  // Pan offset captured at the moment of pausing (null while running).
+  const [frozenX, setFrozenX] = useState<number | null>(null);
+  const [resumeFraction, setResumeFraction] = useState(1);
+
+  useLayoutEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    if (paused) {
+      setFrozenX(new DOMMatrixReadOnly(getComputedStyle(track).transform).m41);
+    } else if (frozenX !== null) {
+      // Resume over the remaining share of the pan instead of restarting it.
+      if (pan > 0) setResumeFraction(Math.max(0.1, 1 - Math.abs(frozenX) / pan));
+      setFrozenX(null);
+    }
+  }, [paused, pan, frozenX]);
+
+  // A fresh workflow pans over the full duration again.
+  useEffect(() => setResumeFraction(1), [solution.id]);
+
+  // How far the graph must slide for its right end to come into view (0 when it fits or on phones).
+  useLayoutEffect(() => {
+    const measure = () => {
+      const frame = frameRef.current;
+      const track = trackRef.current;
+      if (frame && track) setPan(Math.max(0, track.scrollWidth - (frame.clientWidth - 40)));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    if (frameRef.current) observer.observe(frameRef.current);
+    return () => observer.disconnect();
+  }, [solution.id]);
+
+  const completed = stage < 0 ? 0 : Math.min(STAGES, stage);
+  const deliverables = solution.deliverables.slice(0, 3);
+  const panDuration = (STAGES * STAGE_MS + HOLD_MS) / 1000;
+
+  return (
+    <div className="relative isolate overflow-hidden bg-linear-to-br from-accent-600 via-brand-600 to-ink-700 p-4 sm:p-6 lg:col-span-8 lg:p-8">
+      <div aria-hidden="true" className="bg-grid-inverse absolute inset-0 -z-10 opacity-50" />
+      <div aria-hidden="true" className="absolute -right-24 -top-24 -z-10 size-96 rounded-full bg-accent-300/30 blur-3xl" />
+
+      {/* Cross-fade wrapper: dims out on leave, re-enters for each workflow. */}
+      <div key={solution.id} className={cn('flex h-full flex-col gap-4 transition-opacity duration-500', visible ? 'canvas-enter opacity-100' : 'opacity-0')}>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white/15 px-5 py-3.5 backdrop-blur-sm">
+          <p className="text-h4 text-white">{solution.title}</p>
+          <p className="text-caption text-white">
+            <span className="font-semibold tabular-nums">{completed}</span>/{STAGES} stages complete
+          </p>
+        </div>
+
+        <div ref={frameRef} className="relative flex-1 overflow-hidden rounded-xl bg-white/10 p-4 backdrop-blur-sm sm:p-5">
+          {/* ERP connector chips */}
+          <ul className="flex flex-wrap gap-2" aria-label="Connected systems">
+            {ERP_CHIPS.map((chip) => (
+              <li key={chip} className="flex items-center gap-1.5 rounded-md bg-surface px-2 py-1 shadow-xs">
+                <PlugZap aria-hidden="true" className="size-3 text-accent-600" />
+                <span className="text-micro font-semibold text-fg">{chip}</span>
+                <span className="text-micro text-fg-subtle">· Synced</span>
+              </li>
+            ))}
+          </ul>
+
+          {/* Graph. Phones: vertical list. From md: a horizontal branching graph that pans. */}
+          <div className="mt-5 md:mt-8">
+            <div
+              ref={trackRef}
+              className="md:flex md:w-max md:items-center"
+              style={
+                frozenX !== null
+                  ? { transform: `translateX(${frozenX}px)`, transition: 'none' }
+                  : {
+                      transform: panning && pan > 0 ? `translateX(-${pan}px)` : 'translateX(0)',
+                      transition: panning
+                        ? `transform ${panDuration * resumeFraction}s cubic-bezier(0.45, 0, 0.55, 1)`
+                        : 'transform 0.4s ease',
+                    }
+              }
+            >
+              {solution.process.map((step, index) => (
+                <div key={step.title} className="flex flex-col items-center md:flex-row">
+                  <FlowNode icon={step.icon} title={step.title} meta={step.detail} state={nodeState(index, stage)} />
+                  <Arrow lit={stage > index} />
+                </div>
+              ))}
+              {/* Fan-out to deliverables */}
+              <div className="flex flex-col items-center md:flex-row md:self-stretch">
+                <BranchLines lit={stage >= STAGES - 1} />
+                {/* Phones show two deliverables to keep the stacked graph short; the third appears from md. */}
+                <div className="flex w-full flex-col gap-3 md:w-auto [&>*:nth-child(3)]:hidden md:[&>*:nth-child(3)]:block">
+                  {deliverables.map((row) => (
+                    <FlowNode key={row.area} icon={FileCheck2} title={row.area} meta="Deliverable" state={nodeState(STAGES - 1, stage)} variant="deliverable" />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const PILL: Record<NodeState, { label: string; icon: LucideIcon; className: string }> = {
+  ready: { label: 'Ready to start', icon: CircleDashed, className: 'bg-tint text-fg-subtle' },
+  active: { label: 'In progress', icon: CircleDashed, className: 'bg-sand-300/40 text-sand-700' },
+  done: { label: 'Completed', icon: CheckCircle2, className: 'bg-accent-50 text-accent-700' },
+};
+
+function FlowNode({
+  icon: Icon,
+  title,
+  meta,
+  state,
+  variant = 'step',
+}: {
+  icon: LucideIcon;
+  title: string;
+  meta?: string;
+  state: NodeState;
+  variant?: 'step' | 'deliverable';
+}) {
+  const pill = PILL[state];
+  return (
+    <div
+      className={cn(
+        'relative w-full rounded-lg border bg-surface p-3 transition-[box-shadow,border-color,background-color] duration-500 ease-out-soft md:w-48',
+        state === 'active' ? 'node-glow border-sand-300 bg-linear-to-br from-surface to-sand-300/20' : 'border-transparent shadow-sm',
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <span
+          aria-hidden="true"
+          className={cn(
+            'flex size-7 shrink-0 items-center justify-center rounded-full',
+            variant === 'deliverable' ? 'bg-ink-900 text-accent-300' : 'bg-accent-50 text-accent-700',
+          )}
+        >
+          <Icon className="size-3.5" strokeWidth={1.75} />
+        </span>
+        <p className="min-w-0 text-caption font-semibold leading-snug text-fg">{title}</p>
+      </div>
+      <div className="mt-2.5 flex items-center justify-between gap-2">
+        <span className="truncate text-micro text-fg-subtle">{meta}</span>
+        <span className={cn('inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-micro font-semibold', pill.className)}>
+          <pill.icon aria-hidden="true" className={cn('size-2.5', state === 'active' && 'animate-spin')} />
+          {pill.label}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/** Thin connector with an arrowhead: vertical on phones, horizontal from md. */
+function Arrow({ lit }: { lit: boolean }) {
+  const opacity = lit ? 0.95 : 0.4;
+  return (
+    <span aria-hidden="true" className="flex h-6 w-6 shrink-0 items-center justify-center md:h-auto md:w-10">
+      <svg viewBox="0 0 40 12" className="size-6 rotate-90 md:h-3 md:w-10 md:rotate-0">
+        <line x1="0" y1="6" x2="34" y2="6" stroke="white" strokeOpacity={opacity} strokeWidth="1.5" className="transition-[stroke-opacity] duration-500" />
+        <path d="M33 2 L39 6 L33 10 Z" fill="white" fillOpacity={opacity} className="transition-[fill-opacity] duration-500" />
+      </svg>
+    </span>
+  );
+}
+
+/** Phones: a plain arrow. From md: one line in, three curves out to the stacked deliverables. */
+function BranchLines({ lit }: { lit: boolean }) {
+  const opacity = lit ? 0.95 : 0.4;
+  return (
+    <>
+      <span className="md:hidden">
+        <Arrow lit={lit} />
+      </span>
+      <svg aria-hidden="true" viewBox="0 0 48 300" preserveAspectRatio="none" className="hidden w-12 shrink-0 self-stretch md:block">
+        {[50, 150, 250].map((y) => (
+          <path
+            key={y}
+            d={`M0 150 C 24 150, 24 ${y}, 48 ${y}`}
+            fill="none"
+            stroke="white"
+            strokeOpacity={opacity}
+            strokeWidth="1.5"
+            vectorEffect="non-scaling-stroke"
+            className="transition-[stroke-opacity] duration-500"
+          />
+        ))}
+      </svg>
+    </>
+  );
+}

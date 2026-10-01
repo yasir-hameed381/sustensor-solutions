@@ -1,4 +1,6 @@
-import { Check, X } from 'lucide-react';
+import { CheckCircle2, XCircle } from 'lucide-react';
+
+import { cn } from '@/lib/utils';
 
 interface StatusToastProps {
   tone: 'success' | 'error';
@@ -7,14 +9,13 @@ interface StatusToastProps {
 
 export function StatusToast({ tone, message }: StatusToastProps) {
   const isError = tone === 'error';
+  const Icon = isError ? XCircle : CheckCircle2;
   return (
     <div
       role={isError ? 'alert' : 'status'}
-      className={`fixed bottom-5 left-1/2 z-[110] flex -translate-x-1/2 items-center gap-3 border bg-forest px-4 py-3 text-xs text-mist shadow-lg ${
-        isError ? 'border-gold' : 'border-sage'
-      }`}
+      className="panel-in fixed bottom-6 left-1/2 z-(--z-toast) flex -translate-x-1/2 items-center gap-3 rounded-full border border-hairline-inverse-strong bg-ink-950 py-2.5 pl-3 pr-5 text-small text-fg-inverse shadow-lg"
     >
-      {isError ? <X aria-hidden="true" className="h-4 w-4 text-gold" /> : <Check aria-hidden="true" className="h-4 w-4 text-mint" />}
+      <Icon aria-hidden="true" className={cn('size-5', isError ? 'text-sand-300' : 'text-brand-300')} />
       {message}
     </div>
   );

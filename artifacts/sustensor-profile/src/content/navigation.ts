@@ -1,10 +1,10 @@
 import { disciplines } from './disciplines';
-import { SECTION_IDS, sectorAnchorId } from './sections';
+import { disciplineAnchorId, SECTION_IDS, sectorAnchorId } from './sections';
 import { sectors } from './sectors';
 import { solutionMenuOrder, solutions } from './solutions';
 
 /** Optional side effect of a link, e.g. selecting a tab in the section it points to. */
-export type NavAction = { type: 'solution'; id: string } | { type: 'discipline'; id: string };
+export type NavAction = { type: 'solution'; id: string };
 
 export interface NavLink {
   label: string;
@@ -40,11 +40,10 @@ const solutionLinks: NavLink[] = solutionMenuOrder.map((id) => {
 const capabilityGroups: NavGroup[] = disciplines
   .filter((discipline) => discipline.menuGroup)
   .map((discipline) => {
-    const action: NavAction = { type: 'discipline', id: discipline.id };
-    const href = anchor(SECTION_IDS.capabilities);
+    const href = anchor(disciplineAnchorId(discipline.id));
     return {
-      heading: { label: discipline.menuGroup ?? discipline.title, href, action },
-      links: discipline.capabilities.map((label) => ({ label, href, action })),
+      heading: { label: discipline.menuGroup ?? discipline.title, href },
+      links: discipline.capabilities.map((label) => ({ label, href })),
     };
   });
 
@@ -53,7 +52,7 @@ export const primaryNav: NavItem[] = [
   { id: 'solutions', label: 'Solutions', sectionHref: anchor(SECTION_IDS.solutions), groups: [{ links: solutionLinks }] },
   {
     id: 'sector',
-    label: 'Sector',
+    label: 'Sectors',
     sectionHref: anchor(SECTION_IDS.sectors),
     groups: [{ links: sectors.map((sector) => ({ label: sector.name, href: anchor(sectorAnchorId(sector.id)) })) }],
   },
@@ -64,6 +63,7 @@ export const primaryNav: NavItem[] = [
     layout: 'columns',
     groups: capabilityGroups,
   },
+  { id: 'region', label: 'Region', sectionHref: anchor(SECTION_IDS.region) },
   {
     id: 'team',
     label: 'Our Team',

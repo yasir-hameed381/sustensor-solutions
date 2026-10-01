@@ -1,130 +1,131 @@
-import { ArrowDownToLine, ArrowRight, CreditCard, Loader2, Mail, MessageCircle } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { ArrowDownToLine, ArrowUpRight, CreditCard, Loader2, Mail, MapPin, MessageCircle, type LucideIcon } from 'lucide-react';
 
 import { company } from '@/content/company';
 import { copy } from '@/content/copy';
 import { SECTION_IDS } from '@/content/sections';
-import { cn } from '@/lib/utils';
 
-import { Section } from '../shared/Section';
-import { SectionHeader } from '../shared/SectionHeader';
+import { Button } from '../ui/Button';
+import { Accent, SectionHeading } from '../ui/Heading';
+import { IconTile } from '../ui/IconTile';
+import { Section } from '../ui/Section';
+import { ContactForm } from './contact/ContactForm';
 
 interface ContactSectionProps {
-  number: string;
   pdfBusy: boolean;
   onDownloadProfile: () => void;
   onOpenBusinessCard: () => void;
 }
 
-export function ContactSection({ number, pdfBusy, onDownloadProfile, onOpenBusinessCard }: ContactSectionProps) {
+export function ContactSection({ pdfBusy, onDownloadProfile, onOpenBusinessCard }: ContactSectionProps) {
   return (
-    <Section id={SECTION_IDS.contact} labelledBy="contact-heading">
-      <SectionHeader
-        id="contact-heading"
-        eyebrow={`${number} / Next move`}
-        title={
-          <>
-            Take Action <span className="text-emerald">Instantly</span>
-          </>
-        }
-        aside={copy.contact.lead}
-      />
+    <Section id={SECTION_IDS.contact} labelledBy="contact-heading" variant="tint">
+      <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div className="min-w-0 lg:col-span-5">
+          <SectionHeading
+            id="contact-heading"
+            eyebrow="Next move"
+            title={
+              <>
+                Take Action <Accent>Instantly</Accent>
+              </>
+            }
+            lead={copy.contact.lead}
+          />
 
-      <div className="mt-12 grid gap-4 md:grid-cols-2">
-        <ContactCard
-          href={company.whatsappGreetingUrl}
-          external
-          icon={MessageCircle}
-          label="WhatsApp & Phone"
-          value={company.phone}
-          note={copy.contact.whatsappNote}
-        />
-        <ContactCard
-          href={company.emailUrl}
-          icon={Mail}
-          label="Corporate Briefing Desk"
-          value={company.email}
-          note={copy.contact.emailNote}
-          dark
-        />
-      </div>
+          <ul className="mt-10 space-y-3">
+            <ContactItem
+              href={company.whatsappGreetingUrl}
+              external
+              icon={MessageCircle}
+              label="WhatsApp & Phone"
+              value={company.phone}
+              note={copy.contact.whatsappNote}
+            />
+            <ContactItem
+              href={company.emailUrl}
+              icon={Mail}
+              label="Corporate Briefing Desk"
+              value={company.email}
+              note={copy.contact.emailNote}
+            />
+            <li className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-5 shadow-xs">
+              <IconTile icon={MapPin} />
+              <span>
+                <span className="block text-eyebrow uppercase text-accent-700">Headquarters</span>
+                <span className="mt-1 block text-h4 text-fg">{company.locationLong}</span>
+              </span>
+            </li>
+          </ul>
 
-      <div className="mt-4 flex flex-col gap-4 border border-line bg-paper p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
-        <div>
-          <h3 className="display text-xl font-semibold text-forest">Company resources</h3>
-          <p className="mt-1 text-sm text-copy">Take our capability profile or executive business card with you.</p>
+          <div className="mt-8 rounded-xl border border-hairline bg-surface p-6">
+            <h3 className="text-h4 text-fg">Company resources</h3>
+            <p className="mt-1 text-small text-fg-muted">Take our capability profile or executive business card with you.</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Button
+                variant="primary"
+                size="sm"
+                icon={pdfBusy ? Loader2 : ArrowDownToLine}
+                iconPosition="leading"
+                onClick={onDownloadProfile}
+                disabled={pdfBusy}
+                className={pdfBusy ? '[&>svg]:animate-spin' : undefined}
+              >
+                {pdfBusy ? 'Preparing PDF…' : 'Download PDF profile'}
+              </Button>
+              <Button variant="secondary" size="sm" icon={CreditCard} iconPosition="leading" onClick={onOpenBusinessCard}>
+                Business card
+              </Button>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={onDownloadProfile}
-            disabled={pdfBusy}
-            className="flex items-center gap-2 bg-forest px-4 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-mint transition-colors hover:bg-forest-2 disabled:cursor-wait disabled:opacity-70"
-          >
-            {pdfBusy ? (
-              <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />
-            ) : (
-              <ArrowDownToLine aria-hidden="true" className="h-4 w-4" />
-            )}
-            {pdfBusy ? 'Preparing PDF…' : 'Download PDF profile'}
-          </button>
-          <button
-            type="button"
-            onClick={onOpenBusinessCard}
-            className="flex items-center gap-2 border border-gold px-4 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-forest transition-colors hover:bg-gold"
-          >
-            <CreditCard aria-hidden="true" className="h-4 w-4" />
-            Business card
-          </button>
+
+        <div className="min-w-0 lg:col-span-7">
+          <ContactForm />
         </div>
       </div>
     </Section>
   );
 }
 
-interface ContactCardProps {
+interface ContactItemProps {
   href: string;
   icon: LucideIcon;
   label: string;
   value: string;
   note: string;
   external?: boolean;
-  dark?: boolean;
 }
 
-function ContactCard({ href, icon: Icon, label, value, note, external = false, dark = false }: ContactCardProps) {
+function ContactItem({ href, icon, label, value, note, external = false }: ContactItemProps) {
   return (
-    <a
-      href={href}
-      {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
-      className={cn(
-        'group relative flex min-h-[230px] flex-col justify-between overflow-hidden border p-6 transition-colors sm:p-8',
-        dark ? 'border-forest bg-forest text-ivory hover:bg-forest-2' : 'border-line-green bg-mist hover:border-emerald hover:bg-mist-2',
-      )}
-    >
-      <span
-        aria-hidden="true"
-        className={cn(
-          'absolute -right-12 -top-12 h-40 w-40 rounded-full border transition-transform duration-500 group-hover:scale-125',
-          dark ? 'border-teal/50' : 'border-line-green',
-        )}
-      />
-      <span className="relative flex items-center justify-between">
-        <span className={cn('flex h-11 w-11 items-center justify-center', dark ? 'bg-gold text-forest' : 'bg-forest text-mint')}>
-          <Icon aria-hidden="true" className="h-5 w-5" />
+    <li>
+      <a
+        href={href}
+        {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
+        className="spotlight group flex items-start gap-4 rounded-xl border border-hairline bg-surface p-5 shadow-xs transition-[border-color,box-shadow,transform] duration-(--duration-base) ease-out-soft hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-md"
+      >
+        <IconTile icon={icon} />
+        <span className="min-w-0 flex-1">
+          <span className="block text-eyebrow uppercase text-accent-700">{label}</span>
+          <span className="mt-1 block break-words text-body font-semibold text-fg sm:text-h4">
+            {/* Lets a long email wrap after the "@" rather than mid-word. */}
+            {value.includes('@') ? (
+              <>
+                {value.split('@')[0]}@<wbr />
+                {value.split('@')[1]}
+              </>
+            ) : (
+              value
+            )}
+          </span>
+          <span className="mt-1 block text-small text-fg-muted">{note}</span>
         </span>
-        <ArrowRight
+        <ArrowUpRight
           aria-hidden="true"
-          className={cn('h-5 w-5 transition-transform group-hover:translate-x-1', dark ? 'text-mint' : 'text-emerald')}
+          className="size-5 shrink-0 text-fg-subtle transition-transform duration-(--duration-fast) group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent-700"
         />
-      </span>
-      <span className="relative block">
-        <span className={cn('mono block text-[9px]', dark ? 'text-sage' : 'text-emerald')}>{label}</span>
-        <span className={cn('display mt-3 block break-all font-medium sm:text-3xl', dark ? 'text-2xl text-ivory' : 'text-2xl text-forest')}>
-          {value}
-        </span>
-        <span className={cn('mt-2 block text-sm leading-6', dark ? 'text-on-dark' : 'text-copy')}>{note}</span>
-      </span>
-    </a>
+        {external && <span className="sr-only">(opens in a new tab)</span>}
+      </a>
+    </li>
   );
 }

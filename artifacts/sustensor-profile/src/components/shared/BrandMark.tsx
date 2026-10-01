@@ -1,10 +1,18 @@
 import { company } from '@/content/company';
+import { cn } from '@/lib/utils';
 
-export function BrandMark() {
+/** Logo + wordmark. `inverse` for dark backgrounds. */
+export function BrandMark({ inverse = true, className }: { inverse?: boolean; className?: string }) {
   return (
-    <span className="flex items-center gap-3.5">
-      <img src={company.logo.onDark} alt="" className="h-11 w-auto object-contain sm:h-12" />
-      <span className="display text-[20px] font-semibold leading-none tracking-[-0.03em] text-ivory sm:text-[22px]">
+    <span className={cn('flex items-center gap-2.5', className)}>
+      <img
+        src={inverse ? company.logo.onDark : company.logo.onLight}
+        alt=""
+        width={118}
+        height={156}
+        className="h-9 w-auto"
+      />
+      <span className={cn('text-h4 font-semibold tracking-tight', inverse ? 'text-fg-inverse' : 'text-fg')}>
         {company.shortName}
       </span>
     </span>

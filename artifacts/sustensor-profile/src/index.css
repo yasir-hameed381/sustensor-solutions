@@ -1,121 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import '@fontsource-variable/inter/opsz.css';
 @import 'tailwindcss';
-@import 'tw-animate-css';
-@plugin "@tailwindcss/typography";
 
-@custom-variant dark (&:is(.dark *));
-
-/* Theme tokens used by the shadcn/ui components in src/components/ui. */
-@theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-card-border: hsl(var(--card-border));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-popover-border: hsl(var(--popover-border));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-primary-border: var(--primary-border);
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-secondary-border: var(--secondary-border);
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-muted-border: var(--muted-border);
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-accent-border: var(--accent-border);
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-destructive-border: var(--destructive-border);
-  --color-sidebar: hsl(var(--sidebar));
-  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
-  --color-sidebar-border: hsl(var(--sidebar-border));
-  --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
-  --color-sidebar-accent: hsl(var(--sidebar-accent));
-  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
-  --color-sidebar-ring: hsl(var(--sidebar-ring));
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-}
-
-:root {
-  --button-outline: rgba(17, 35, 42, 0.14);
-  --badge-outline: rgba(17, 35, 42, 0.08);
-  --elevate-1: rgba(17, 35, 42, 0.035);
-  --elevate-2: rgba(17, 35, 42, 0.08);
-  --background: 42 31% 96%;
-  --foreground: 198 25% 13%;
-  --border: 40 16% 85%;
-  --card: 42 38% 98%;
-  --card-foreground: 198 25% 13%;
-  --card-border: 40 16% 85%;
-  --sidebar: 198 25% 13%;
-  --sidebar-foreground: 42 31% 96%;
-  --sidebar-border: 198 18% 25%;
-  --sidebar-primary: 156 48% 42%;
-  --sidebar-primary-foreground: 198 25% 13%;
-  --sidebar-accent: 198 18% 25%;
-  --sidebar-accent-foreground: 42 31% 96%;
-  --sidebar-ring: 156 48% 42%;
-  --popover: 42 38% 98%;
-  --popover-foreground: 198 25% 13%;
-  --popover-border: 40 16% 85%;
-  --primary: 156 48% 42%;
-  --primary-foreground: 198 25% 13%;
-  --secondary: 194 22% 91%;
-  --secondary-foreground: 198 25% 13%;
-  --muted: 41 24% 91%;
-  --muted-foreground: 198 10% 43%;
-  --accent: 39 79% 67%;
-  --accent-foreground: 198 25% 13%;
-  --destructive: 2 58% 48%;
-  --destructive-foreground: 42 31% 96%;
-  --input: 40 16% 85%;
-  --ring: 156 48% 42%;
-  --radius: 0.75rem;
-  --primary-border: hsl(var(--primary));
-  --secondary-border: hsl(var(--secondary));
-  --muted-border: hsl(var(--muted));
-  --accent-border: hsl(var(--accent));
-  --destructive-border: hsl(var(--destructive));
-}
-
-.dark {
-  --background: 198 25% 13%;
-  --foreground: 42 31% 96%;
-  --border: 198 18% 25%;
-  --card: 198 22% 17%;
-  --card-foreground: 42 31% 96%;
-  --card-border: 198 18% 25%;
-  --sidebar: 198 25% 10%;
-  --sidebar-foreground: 42 31% 96%;
-  --sidebar-border: 198 18% 25%;
-  --popover: 198 22% 17%;
-  --popover-foreground: 42 31% 96%;
-  --popover-border: 198 18% 25%;
-  --primary: 156 48% 48%;
-  --primary-foreground: 198 25% 10%;
-  --secondary: 198 18% 25%;
-  --secondary-foreground: 42 31% 96%;
-  --muted: 198 18% 22%;
-  --muted-foreground: 40 12% 72%;
-  --accent: 39 79% 67%;
-  --accent-foreground: 198 25% 13%;
-  --input: 198 18% 25%;
-  --ring: 156 48% 48%;
-}
-
-/* Brand palette. Use these tokens (e.g. `bg-forest`, `text-emerald`) instead of raw hex values. */
+/* ==========================================================================
+   Design tokens
+   Every colour, type size, radius, shadow and motion value on the site comes
+   from here. Use the generated utilities (`bg-ink-950`, `text-fg-muted`,
+   `text-h2`, `rounded-lg`, `shadow-md`, `ease-out-soft`, …), never raw values.
+   Contrast: every text/background pair used on the site meets WCAG AA.
+   ========================================================================== */
 @theme {
+  /* Only the colours below exist; Tailwind's default palette is switched off. */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Colour scheme sampled from the logo mark: dark teal #183838, green #288060, mint #78c0a0. */
+
+  /* Ink: the logo's dark teal, deepened for dark sections and used for body text. */
+  --color-ink-950: #071715;
+  --color-ink-900: #0c211f;
+  --color-ink-800: #122d2b;
+  --color-ink-700: #183838;
+  --color-ink-600: #24504e;
+
+  /* Light surfaces: clean white with a faint mint cast. */
+  --color-canvas: #f6f9f8;
+  --color-surface: #ffffff;
+  --color-tint: #ecf4f1;
+  --color-tint-strong: #dcebe5;
+
+  /* Text. `fg-*` on light surfaces, `fg-inverse-*` on ink. */
+  --color-fg: #0c211f;
+  --color-fg-muted: #42585a;
+  --color-fg-subtle: #566b6c;
+  --color-fg-inverse: #f2f8f6;
+  --color-fg-inverse-muted: #a9c3bd;
+  --color-fg-inverse-subtle: #8aa7a1;
+
+  /* Hairlines. */
+  --color-hairline: #e1e9e6;
+  --color-hairline-strong: #c8d7d1;
+  --color-hairline-inverse: #ffffff1a;
+  --color-hairline-inverse-strong: #ffffff2e;
+
+  /* Accent (primary): the logo green. Buttons, links, highlights.
+     600 = logo green (fills with white text 4.8:1; large text on light). 700 for small text on light.
+     300 = logo mint, for text and icons on ink. */
+  --color-accent-50: #e9f5ef;
+  --color-accent-100: #cfeadc;
+  --color-accent-300: #78c0a0;
+  --color-accent-400: #4fae84;
+  --color-accent-500: #339570;
+  --color-accent-600: #288060;
+  --color-accent-700: #1f6a4f;
+  --color-accent-800: #185440;
+
+  /* Brand (secondary): the teal from the logo gradient. Eyebrow dots, ESG highlights,
+     data series and one or two heading highlights, so the page isn't a single green. */
+  --color-brand-50: #e7f4f4;
+  --color-brand-100: #c9e7e6;
+  --color-brand-300: #7fc8c4;
+  --color-brand-400: #52aea8;
+  --color-brand-500: #2f918b;
+  --color-brand-600: #237873;
+  --color-brand-700: #1b625e;
+  --color-brand-800: #154d4a;
+
+  /* Secondary: amber, for warnings and small highlights only. */
+  --color-sand-300: #f5cf7a;
+  --color-sand-500: #d99a1e;
+  --color-sand-700: #8a5a00;
+
+  /* Feedback. */
+  --color-danger-50: #fef1f0;
+  --color-danger-600: #b42318;
+
+  /* Legacy print palette: used only by the PDF profile and business card. */
   --color-forest: #17343a;
   --color-forest-2: #20464a;
   --color-abyss: #0f2428;
@@ -140,146 +100,560 @@
   --color-on-dark: #c3d2cc;
   --color-ivory: #f6f2e9;
 
-  --font-sans: 'Manrope', sans-serif;
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-mono: 'DM Mono', monospace;
+  /* Typography: Inter Variable with optical sizing, so display sizes get the tighter display cut. */
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-print-sans: 'Manrope', sans-serif;
+  --font-print-display: 'Space Grotesk', sans-serif;
+  --font-print-mono: 'DM Mono', monospace;
+
+  /* Type scale: `text-display`, `text-h1` … `text-caption`. Size / line-height / tracking / weight. */
+  --text-display: clamp(2.625rem, 1.55rem + 4.4vw, 5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.038em;
+  --text-display--font-weight: 620;
+  --text-h1: clamp(2.25rem, 1.55rem + 2.9vw, 3.75rem);
+  --text-h1--line-height: 1.05;
+  --text-h1--letter-spacing: -0.032em;
+  --text-h1--font-weight: 620;
+  --text-h2: clamp(1.875rem, 1.4rem + 1.95vw, 3rem);
+  --text-h2--line-height: 1.08;
+  --text-h2--letter-spacing: -0.028em;
+  --text-h2--font-weight: 620;
+  --text-h3: clamp(1.3125rem, 1.15rem + 0.6vw, 1.625rem);
+  --text-h3--line-height: 1.2;
+  --text-h3--letter-spacing: -0.02em;
+  --text-h3--font-weight: 600;
+  --text-h4: 1.125rem;
+  --text-h4--line-height: 1.35;
+  --text-h4--letter-spacing: -0.012em;
+  --text-h4--font-weight: 600;
+  --text-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --text-lead--line-height: 1.6;
+  --text-lead--letter-spacing: -0.006em;
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.55;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.45;
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.3;
+  --text-eyebrow--letter-spacing: 0.1em;
+  --text-eyebrow--font-weight: 600;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.3;
+  /* Oversized decorative numerals and wordmarks. */
+  --text-watermark: 7rem;
+  --text-watermark--line-height: 1;
+  --text-watermark--letter-spacing: -0.05em;
+  --text-watermark--font-weight: 700;
+  --text-wordmark: clamp(3.5rem, 0.5rem + 16vw, 16rem);
+  --text-wordmark--line-height: 0.8;
+  --text-wordmark--letter-spacing: -0.06em;
+  --text-wordmark--font-weight: 700;
+
+  /* Layout. */
+  --container-site: 78rem;
+  --container-prose: 42rem;
+  --spacing-section: clamp(4rem, 2.75rem + 4.5vw, 7rem);
+  --spacing-header: 4.5rem;
+
+  /* Radii. */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  /* Elevation. */
+  --shadow-xs: 0 1px 2px 0 #0c211f0d;
+  --shadow-sm: 0 1px 2px 0 #0c211f0f, 0 2px 8px -2px #0c211f14;
+  --shadow-md: 0 2px 4px -1px #0c211f0f, 0 12px 28px -8px #0c211f1f;
+  --shadow-lg: 0 4px 8px -2px #0c211f14, 0 28px 56px -16px #0c211f40;
+  --shadow-glow: 0 0 0 1px #33957033, 0 24px 60px -20px #28806066;
+
+  /* Motion. */
+  --ease-out-soft: cubic-bezier(0.22, 0.75, 0.25, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-glow-pulse: glow-pulse 9s var(--ease-in-out-soft) infinite alternate;
+
+  @keyframes glow-pulse {
+    from { opacity: 0.55; transform: translate3d(0, 0, 0) scale(1); }
+    to { opacity: 0.9; transform: translate3d(2%, -3%, 0) scale(1.08); }
+  }
+}
+
+/* Non-theme tokens (Tailwind has no namespace for these): use as `z-(--z-header)`, `duration-(--duration-base)`. */
+:root {
+  --z-raised: 1;
+  --z-sticky: 20;
+  --z-header: 40;
+  --z-drawer: 60;
+  --z-overlay: 100;
+  --z-toast: 110;
+
+  --duration-fast: 150ms;
+  --duration-base: 240ms;
+  --duration-reveal: 350ms;
+  --duration-slow: 600ms;
 }
 
 @layer base {
   * {
-    border-color: var(--color-border);
+    border-color: var(--color-hairline);
   }
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     margin: 0;
-    background-color: var(--color-cream);
-    color: var(--color-forest);
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
     font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    font-optical-sizing: auto;
+    font-feature-settings: 'cv11', 'ss01';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Keeps anchor targets clear of the fixed 72px header. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Keeps anchor targets clear of the fixed header. */
   [id] {
-    scroll-margin-top: 88px;
+    scroll-margin-top: calc(var(--spacing-header) + 1rem);
   }
 
   ::selection {
-    background: var(--color-mint);
-    color: var(--color-forest);
+    background: var(--color-accent-100);
+    color: var(--color-fg);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-sage);
-    outline-offset: 2px;
+    outline: 2px solid var(--color-accent-600);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
   }
 }
 
 @layer utilities {
-  .grain::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.035;
-    z-index: 50;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  /* Faint square grid behind the light hero. */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--color-hairline) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-hairline) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* The same grid for dark sections and bands. */
+  .bg-grid-inverse {
+    background-image:
+      linear-gradient(to right, var(--color-hairline-inverse) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-hairline-inverse) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Soft fades for the decorative grids (mask alpha only, not colour). */
+  .mask-fade-b {
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%);
+  }
+  /* Soft edges for the frameworks ticker. */
+  .mask-fade-x {
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+
+  /* Hints that the solution tabs scroll sideways; removed once they fit (lg). */
+  .mask-fade-r {
+    mask-image: linear-gradient(to right, #000 82%, transparent);
+  }
+  @media (width >= 64rem) {
+    .mask-fade-r {
+      mask-image: none;
+    }
+  }
+  .mask-fade-l {
+    mask-image: linear-gradient(to left, #000, transparent 70%);
+  }
+  .mask-fade-radial-l {
+    mask-image: radial-gradient(ellipse 60% 60% at 20% 40%, #000 20%, transparent 80%);
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
 
+/*
+ * Scroll reveal: [data-reveal] elements fade up once as they enter the viewport.
+ * Only hidden while JS runs (`html.js`, set in index.html), so content is visible without JS.
+ * `.reveal-instant` (anchor landings) skips the transition.
+ */
+[data-reveal] {
+  transition:
+    opacity var(--duration-reveal) var(--ease-out-soft),
+    transform var(--duration-reveal) var(--ease-out-soft);
+  transition-delay: calc(var(--reveal-index, 0) * 40ms);
+}
+.js [data-reveal]:not(.is-visible) {
+  opacity: 0.001;
+  transform: translateY(10px);
+}
+[data-reveal].reveal-instant {
+  transition: none;
+}
+
+.hero-enter {
+  animation: hero-enter 400ms var(--ease-out-soft) both;
+  animation-delay: calc(var(--reveal-index, 0) * 50ms);
+}
+
+@keyframes hero-enter {
+  from { opacity: 0.001; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.panel-in {
+  animation: panel-in var(--duration-base) var(--ease-out-soft) both;
+}
+
+@keyframes drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+.drawer-in {
+  animation: drawer-in var(--duration-base) var(--ease-out-soft) both;
+}
+
+/* ==========================================================================
+   Decorative motion. Every animation here is disabled under prefers-reduced-motion
+   (see the block below). Animations marked `.anim-on-reveal` wait until their
+   [data-reveal] ancestor is on screen.
+   ========================================================================== */
+
+.js [data-reveal]:not(.is-visible) .anim-on-reveal {
+  animation-play-state: paused;
+}
+
+/* Chart bars growing from the baseline (hero mockup). */
+@keyframes grow-y {
+  from { transform: scaleY(0); }
+}
+.animate-grow-y {
+  transform-origin: bottom;
+  animation: grow-y 900ms var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 250ms);
+}
+
+/* Progress bars and timeline connectors drawing left→right (or top→bottom). */
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+}
+.animate-grow-x {
+  transform-origin: left;
+  animation: grow-x 1000ms var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 120ms + 300ms);
+}
+@keyframes grow-y-line {
+  from { transform: scaleY(0); }
+}
+.animate-draw-line {
+  transform-origin: top;
+  animation: grow-y-line 900ms var(--ease-out-soft) both;
+}
+@media (width >= 64rem) {
+  .animate-draw-line {
+    transform-origin: left;
+    animation-name: grow-x;
+  }
+}
+
+/* Staggered pop-in for timeline nodes. */
+@keyframes pop-in {
+  from { opacity: 0.001; transform: scale(0.85); }
+}
+.animate-pop-in {
+  animation: pop-in 450ms var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 110ms + 150ms);
+}
+
+/* Gentle hover-free float (floating mockup chip). */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.animate-float {
+  animation: float 6s var(--ease-in-out-soft) infinite;
+}
+
+/* Infinite ticker for the frameworks strip. The list is rendered twice; the track moves by half. */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 45s linear infinite;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Pulses travelling down the architecture connectors. */
+@keyframes flow-down {
+  0% { transform: translateY(-100%); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(1.5rem); opacity: 0; }
+}
+.animate-flow {
+  animation: flow-down 2.2s ease-in infinite;
+  animation-delay: calc(var(--i, 0) * 350ms);
+}
+
+/* Rotating gradient border (Reality Check "one operating view" card). */
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes border-spin {
+  to { --border-angle: 360deg; }
+}
+.border-spin {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-ink-900), var(--color-ink-900)) padding-box,
+    conic-gradient(from var(--border-angle), var(--color-accent-500), var(--color-brand-300), transparent 40%, transparent 60%, var(--color-accent-500)) border-box;
+  animation: border-spin 8s linear infinite;
+}
+
+/* Shine sweep across primary buttons on hover. */
+@keyframes shine {
+  from { transform: translateX(-120%) skewX(-20deg); }
+  to { transform: translateX(260%) skewX(-20deg); }
+}
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, #ffffff40, transparent);
+  transform: translateX(-120%) skewX(-20deg);
+  pointer-events: none;
+}
+.btn-shine:hover::after {
+  animation: shine 750ms var(--ease-out-soft);
+}
+
+/* ---------- Spotlight cards: glow + gradient border that follow the pointer ----------
+   --mx / --my are set by useSpotlight(). Add `.spotlight` (light) or `.spotlight spotlight-inverse`. */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before,
+.spotlight::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out-soft);
+}
+/* Soft inner glow. */
+.spotlight::before {
+  z-index: -1;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--color-accent-500) 9%, transparent), transparent 60%);
+}
+/* 1px gradient border, drawn with a mask so it only shows on the edge. */
+.spotlight::after {
+  padding: 1px;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), var(--color-accent-500), var(--color-brand-500) 45%, transparent 70%);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+}
+.spotlight:hover::before,
+.spotlight:hover::after {
+  opacity: 1;
+}
+.spotlight-inverse::before {
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--color-accent-400) 16%, transparent), transparent 60%);
+}
+
+/* ---------- Scroll progress bar (header). Scroll-driven where supported, hidden otherwise. ---------- */
+.scroll-progress {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    display: block;
+    transform-origin: left;
+    animation: grow-x linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+/* ---------- Radar sweep (Region visual) ---------- */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-sweep {
+  animation: spin 7s linear infinite;
+}
+@keyframes radar-ping {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+.animate-radar-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: radar-ping 2.8s var(--ease-out-soft) infinite;
+  animation-delay: calc(var(--i, 0) * 700ms);
+}
+
+/* ---------- Converging connectors (Reality Check) ---------- */
+@keyframes dash-flow {
+  to { stroke-dashoffset: -24; }
+}
+.animate-dash {
+  stroke-dasharray: 4 8;
+  animation: dash-flow 1.2s linear infinite;
+}
+
+/* ---------- Donut ring drawing (hero satellite card) ---------- */
+@keyframes ring-draw {
+  from { stroke-dashoffset: var(--ring-length); }
+}
+.animate-ring {
+  animation: ring-draw 1400ms var(--ease-out-soft) 500ms both;
+}
+
+/* ---------- Aurora (Mission & Vision) ---------- */
+@keyframes aurora {
+  0%, 100% { transform: translate3d(-10%, -6%, 0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(8%, 6%, 0) rotate(20deg) scale(1.15); }
+}
+.animate-aurora {
+  animation: aurora 16s var(--ease-in-out-soft) infinite;
+}
+
+/* ---------- 3D tilt (hero mockup); rotation set by useTilt(). ---------- */
+.tilt {
+  transform: perspective(1400px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 500ms var(--ease-out-soft);
+  transform-style: preserve-3d;
+}
+
+/* ---------- Workflow orchestrator (modelled on Zip's intake-to-procure demo) ---------- */
+/* Canvas cross-fade: each workflow rises in slightly. */
+@keyframes canvas-enter {
+  from { opacity: 0.001; transform: translateY(8px) scale(0.99); }
+}
+.canvas-enter {
+  animation: canvas-enter 600ms var(--ease-out-soft) both;
+}
+/* Warm glow on the node that is running (the reference uses a soft peach halo). */
+.node-glow {
+  box-shadow:
+    0 0 0 1px var(--color-sand-300),
+    0 0 18px 2px color-mix(in oklab, var(--color-sand-300) 70%, transparent),
+    0 10px 30px -10px color-mix(in oklab, var(--color-sand-500) 45%, transparent);
+}
+/* Blinking caret for the intake card. */
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+.caret {
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+/* ---------- Approval chain orbit ---------- */
+@keyframes orbit-spin {
+  to { transform: rotate(360deg); }
+}
+.animate-orbit {
+  animation: orbit-spin 60s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .js [data-reveal]:not(.is-visible) {
+    opacity: 1;
+    transform: none;
+  }
+  .marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+  }
+  .marquee-duplicate {
+    display: none;
+  }
+  .scroll-progress {
+    display: none;
+  }
+  .tilt {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   Legacy print styles: PDF profile and business card.
+   These keep their original typography; the website does not use them.
+   ========================================================================== */
+
+.executive-pdf-container,
+.card-print-sheet,
+.card-3d-wrapper {
+  font-family: var(--font-print-sans);
+}
+
 .display {
-  font-family: var(--font-display);
+  font-family: var(--font-print-display);
   letter-spacing: -0.055em;
 }
 
 .mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-print-mono);
   text-transform: uppercase;
   letter-spacing: 0.11em;
-}
-
-/* Header navigation */
-.nav-link {
-  color: var(--color-on-dark);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  transition: color 0.2s ease;
-}
-.nav-link:hover,
-.nav-link[aria-expanded='true'] {
-  color: var(--color-mint);
-}
-
-.nav-panel {
-  position: absolute;
-  top: 100%;
-  z-index: 60;
-  border: 1px solid var(--color-line);
-  border-top: 2px solid var(--color-emerald);
-  background: var(--color-cream);
-  padding: 8px;
-  color: var(--color-forest);
-  box-shadow: 0 18px 40px -18px rgba(10, 24, 27, 0.45);
-  animation: nav-panel-in 0.16s ease-out both;
-}
-
-.nav-panel-link {
-  display: block;
-  width: 100%;
-  padding: 8px 10px;
-  text-align: left;
-  font-size: 13px;
-  line-height: 1.35;
-  color: var(--color-copy-strong);
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
-.nav-panel-link:hover,
-.nav-panel-link:focus-visible {
-  background: var(--color-mist);
-  color: var(--color-forest);
-}
-
-@keyframes nav-panel-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Entrance animations */
-.reveal { animation: reveal 0.75s cubic-bezier(0.22, 0.75, 0.25, 1) both; }
-.reveal-delay-1 { animation-delay: 0.1s; }
-.reveal-delay-2 { animation-delay: 0.2s; }
-
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.75s cubic-bezier(0.22, 0.75, 0.25, 1), transform 0.75s cubic-bezier(0.22, 0.75, 0.25, 1);
-}
-.reveal-on-scroll.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@keyframes reveal {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .reveal,
-  .reveal-on-scroll,
-  .nav-panel {
-    animation: none;
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
 }
 
 /* 3D business card */
@@ -304,10 +678,7 @@
   transform: rotateY(180deg);
 }
 
-/* ==========================================================================
-   Executive PDF document (A4 at 96dpi: 794 x 1123px)
-   ========================================================================== */
-
+/* Executive PDF document (A4 at 96dpi: 794 x 1123px) */
 .executive-pdf-container {
   display: none;
 }
@@ -362,8 +733,11 @@
     print-color-adjust: exact;
   }
 
-  .grain::after {
-    display: none !important;
+  [data-reveal],
+  .hero-enter {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
 
   html:not(.print-business-card) #site-root {

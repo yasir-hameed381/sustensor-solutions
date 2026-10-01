@@ -13,53 +13,64 @@ import { RegionSection } from '@/components/sections/RegionSection';
 import { SectorsSection } from '@/components/sections/SectorsSection';
 import { SolutionsSection } from '@/components/sections/SolutionsSection';
 import { TeamSection } from '@/components/sections/TeamSection';
+import { WorkflowSection } from '@/components/sections/WorkflowSection';
 import { VerdictSection } from '@/components/sections/VerdictSection';
 import { StatusToast } from '@/components/shared/StatusToast';
 import { company } from '@/content/company';
-import { disciplines } from '@/content/disciplines';
 import type { NavLink } from '@/content/navigation';
 import { solutions } from '@/content/solutions';
 import { usePdfExport } from '@/hooks/usePdfExport';
 import { useRevealOnScroll } from '@/hooks/useRevealOnScroll';
+import { useSpotlight } from '@/hooks/useSpotlight';
 
 export default function App() {
   const [activeSolutionId, setActiveSolutionId] = useState(solutions[0].id);
-  const [openDisciplineId, setOpenDisciplineId] = useState<string | null>(disciplines[0].id);
+  const [showAllSolutions, setShowAllSolutions] = useState(false);
   const [businessCardOpen, setBusinessCardOpen] = useState(false);
   const pdfSourceRef = useRef<HTMLDivElement>(null);
   const { status: pdfStatus, exportPdf } = usePdfExport(pdfSourceRef, company.pdfFileName);
+  const pdfBusy = pdfStatus === 'working';
 
   useRevealOnScroll();
+  useSpotlight();
 
-  const handleNavigate = useCallback(({ action }: NavLink) => {
-    if (action?.type === 'solution') setActiveSolutionId(action.id);
-    if (action?.type === 'discipline') setOpenDisciplineId(action.id);
+  const selectSolution = useCallback((id: string) => {
+    setShowAllSolutions(false);
+    setActiveSolutionId(id);
   }, []);
+
+  const handleNavigate = useCallback(
+    ({ action }: NavLink) => {
+      if (action?.type === 'solution') selectSolution(action.id);
+    },
+    [selectSolution],
+  );
 
   return (
     <>
-      <div id="site-root" className="grain min-h-dvh overflow-x-hidden bg-cream text-forest">
+      <div id="site-root" className="min-h-dvh overflow-x-clip bg-canvas text-fg">
         <SiteHeader onNavigate={handleNavigate} />
 
-        <main className="pt-[72px]">
+        <main id="main" tabIndex={-1} className="focus:outline-none">
           <HeroSection />
-          <AboutSection number="01" />
-          <RealityCheckSection number="02" />
-          <SolutionsSection number="03" activeId={activeSolutionId} onActiveChange={setActiveSolutionId} />
-          <SectorsSection number="04" />
-          <CapabilitiesSection number="05" openId={openDisciplineId} onOpenChange={setOpenDisciplineId} />
-          <RegionSection number="06" />
-          <VerdictSection number="07" />
-          <TeamSection number="08" />
-          <ContactSection
-            number="09"
-            pdfBusy={pdfStatus === 'working'}
-            onDownloadProfile={exportPdf}
-            onOpenBusinessCard={() => setBusinessCardOpen(true)}
+          <AboutSection />
+          <RealityCheckSection />
+          <WorkflowSection />
+          <SolutionsSection
+            activeId={activeSolutionId}
+            showAll={showAllSolutions}
+            onSelect={selectSolution}
+            onShowAllChange={setShowAllSolutions}
           />
+          <SectorsSection />
+          <CapabilitiesSection />
+          <RegionSection />
+          <VerdictSection pdfBusy={pdfBusy} onDownloadProfile={exportPdf} />
+          <TeamSection />
+          <ContactSection pdfBusy={pdfBusy} onDownloadProfile={exportPdf} onOpenBusinessCard={() => setBusinessCardOpen(true)} />
         </main>
 
-        <SiteFooter />
+        <SiteFooter onNavigate={handleNavigate} />
 
         <BusinessCardModal isOpen={businessCardOpen} onClose={() => setBusinessCardOpen(false)} />
 

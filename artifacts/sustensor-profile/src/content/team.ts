@@ -1,7 +1,7 @@
 import type { Partner, Person } from './types';
 
 // Names and roles come from the revision brief.
-// TODO (PLACEHOLDER): bios, photos, and LinkedIn links are not yet available. Add a `photo` (file in /public/team) and `linkedInUrl` when ready.
+// TODO (PLACEHOLDER): bios, photos, and LinkedIn links are not yet available. Add an `image` (file in /public/team) and `linkedInUrl` when ready.
 export const leadershipTeam: Person[] = [
   {
     name: 'M. Noman Arshad',
@@ -11,8 +11,7 @@ export const leadershipTeam: Person[] = [
   {
     name: 'Usman Raza',
     role: 'Director – Sustainability & Procurement',
-    bio: 'Directs sustainability and procurement advisory, helping organisations embed ESG governance and carbon accountability into commercial operations.',
-  },
+    bio: 'Directs sustainability and procurement advisory, helping organisations embed ESG governance and carbon accountability into commercial operations.',  },
 ];
 
 export const expertNetwork: Person[] = [

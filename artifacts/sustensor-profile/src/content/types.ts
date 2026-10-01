@@ -59,8 +59,9 @@ export interface Person {
   name: string;
   role: string;
   bio: string;
-  /** Path under /public, e.g. "/team/usman-raza.jpg". Initials are shown when missing. */
-  photo?: string;
+  /** Portrait path under /public, e.g. "/team/usman-raza.jpg" (square, at least 160×160). A monogram is shown when missing. */
+  image?: string;
+  /** Full LinkedIn profile URL. The LinkedIn button is hidden when missing. */
   linkedInUrl?: string;
 }
 

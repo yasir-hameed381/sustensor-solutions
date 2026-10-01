@@ -1,52 +1,102 @@
-import * as React from 'react';
-import * as TabsPrimitive from '@radix-ui/react-tabs';
+import { useRef, type KeyboardEvent, type ReactNode } from 'react';
+
 import { cn } from '@/lib/utils';
 
-const Tabs = TabsPrimitive.Root;
+export interface TabItem {
+  id: string;
+  label: ReactNode;
+}
 
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={cn(
-      'inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground',
-      className,
-    )}
-    {...props}
-  />
-));
-TabsList.displayName = TabsPrimitive.List.displayName;
+interface TabListProps {
+  label: string;
+  items: TabItem[];
+  activeId: string | null;
+  onChange: (id: string) => void;
+  /** DOM id prefix; tabs get `${idPrefix}-tab-${id}`, panels are expected at `${idPrefix}-panel-${id}`. */
+  idPrefix: string;
+  className?: string;
+  renderTab: (item: TabItem, isActive: boolean) => ReactNode;
+  tabClassName?: (isActive: boolean) => string;
+}
 
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow',
-      className,
-    )}
-    {...props}
-  />
-));
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
+export const tabId = (prefix: string, id: string) => `${prefix}-tab-${id}`;
+export const panelId = (prefix: string, id: string) => `${prefix}-panel-${id}`;
 
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content
-    ref={ref}
-    className={cn(
-      'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-      className,
-    )}
-    {...props}
-  />
-));
-TabsContent.displayName = TabsPrimitive.Content.displayName;
+/** WAI-ARIA tablist with roving tabindex: arrow keys, Home and End move between tabs. */
+export function TabList({ label, items, activeId, onChange, idPrefix, className, renderTab, tabClassName }: TabListProps) {
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  const focusedIndex = Math.max(
+    0,
+    items.findIndex((item) => item.id === activeId),
+  );
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const last = items.length - 1;
+    const next = {
+      ArrowRight: index === last ? 0 : index + 1,
+      ArrowDown: index === last ? 0 : index + 1,
+      ArrowLeft: index === 0 ? last : index - 1,
+      ArrowUp: index === 0 ? last : index - 1,
+      Home: 0,
+      End: last,
+    }[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    onChange(items[next].id);
+    refs.current[next]?.focus();
+  };
+
+  return (
+    <div role="tablist" aria-label={label} className={className}>
+      {items.map((item, index) => {
+        const isActive = item.id === activeId;
+        return (
+          <button
+            key={item.id}
+            ref={(element) => {
+              refs.current[index] = element;
+            }}
+            type="button"
+            role="tab"
+            id={tabId(idPrefix, item.id)}
+            aria-selected={isActive}
+            aria-controls={panelId(idPrefix, item.id)}
+            tabIndex={index === focusedIndex ? 0 : -1}
+            onClick={() => onChange(item.id)}
+            onKeyDown={(event) => onKeyDown(event, index)}
+            className={tabClassName?.(isActive)}
+          >
+            {renderTab(item, isActive)}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export function TabPanel({
+  idPrefix,
+  id,
+  hidden,
+  className,
+  children,
+}: {
+  idPrefix: string;
+  id: string;
+  hidden: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      role="tabpanel"
+      id={panelId(idPrefix, id)}
+      aria-labelledby={tabId(idPrefix, id)}
+      hidden={hidden}
+      tabIndex={0}
+      className={cn('focus-visible:outline-offset-8', className)}
+    >
+      {children}
+    </div>
+  );
+}

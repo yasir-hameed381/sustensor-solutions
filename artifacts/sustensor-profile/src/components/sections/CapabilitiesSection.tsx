@@ -1,80 +1,145 @@
-import { Leaf, Minus, Plus } from 'lucide-react';
+import type { CSSProperties } from 'react';
+import { Cloud, Cpu, Leaf, Layers, ShoppingCart, type LucideIcon } from 'lucide-react';
 
 import { disciplines } from '@/content/disciplines';
-import { SECTION_IDS } from '@/content/sections';
+import { disciplineAnchorId, SECTION_IDS } from '@/content/sections';
+import type { Discipline } from '@/content/types';
+import { cn } from '@/lib/utils';
 
-import { Section } from '../shared/Section';
-import { SectionHeader } from '../shared/SectionHeader';
+import { Badge } from '../ui/Badge';
+import { SectionHeading } from '../ui/Heading';
+import { IconTile } from '../ui/IconTile';
+import { Section } from '../ui/Section';
+import { ToneContext } from '../ui/tone';
 
-interface CapabilitiesSectionProps {
-  number: string;
-  openId: string | null;
-  onOpenChange: (id: string | null) => void;
-}
+const icons: Record<string, LucideIcon> = {
+  'sustainability-esg': Leaf,
+  procurement: ShoppingCart,
+  'saas-solutions': Cloud,
+  technology: Cpu,
+};
 
-export function CapabilitiesSection({ number, openId, onOpenChange }: CapabilitiesSectionProps) {
+// Procurement (the longest copy) is the dark feature tile. ESG uses the brand green.
+const FEATURED_ID = 'procurement';
+const BRAND_ID = 'sustainability-esg';
+
+export function CapabilitiesSection() {
   return (
-    <Section id={SECTION_IDS.capabilities} labelledBy="capabilities-heading" tone="mist">
-      <SectionHeader
+    <Section id={SECTION_IDS.capabilities} labelledBy="capabilities-heading" variant="canvas">
+      <SectionHeading
         id="capabilities-heading"
-        eyebrow={`${number} / Capabilities`}
+        eyebrow="Capabilities"
         title="The Integrated Sustensor Architecture"
-        aside="Four connected disciplines. One operating view."
+        lead="Four connected disciplines. One operating view."
+        align="center"
       />
 
-      <div className="mt-16 border-t border-line-green">
-        {disciplines.map((discipline) => {
-          const isOpen = openId === discipline.id;
-          const panelId = `discipline-panel-${discipline.id}`;
-          return (
-            <article key={discipline.id} className="border-b border-line-green">
-              <h3>
-                <button
-                  type="button"
-                  onClick={() => onOpenChange(isOpen ? null : discipline.id)}
-                  aria-expanded={isOpen}
-                  aria-controls={panelId}
-                  className="group grid w-full grid-cols-[40px_1fr_32px] items-center gap-4 py-6 text-left sm:grid-cols-[76px_1fr_32px] sm:gap-6 sm:py-8"
-                >
-                  <span className="mono text-[11px] text-emerald">{discipline.number}</span>
-                  <span className="display text-[clamp(1.35rem,2.7vw,2.45rem)] font-medium leading-[1.1] text-forest transition-colors group-hover:text-emerald">
-                    {discipline.title}
-                  </span>
-                  <span className="flex h-8 w-8 items-center justify-center border border-line-green text-emerald transition-colors group-hover:border-emerald group-hover:bg-emerald group-hover:text-cream">
-                    {isOpen ? <Minus aria-hidden="true" className="h-4 w-4" /> : <Plus aria-hidden="true" className="h-4 w-4" />}
-                  </span>
-                </button>
-              </h3>
+      <ArchitectureDiagram />
 
-              <div id={panelId} hidden={!isOpen} className="pb-8 pl-14 pr-2 sm:pl-[100px] sm:pr-20">
-                <div className="grid gap-6 sm:grid-cols-[0.72fr_1.28fr] sm:gap-12">
-                  <div>
-                    <h4 className="mono text-[9px] text-emerald">The logic</h4>
-                    <p className="mt-3 text-sm leading-7 text-copy">{discipline.logic}</p>
-                  </div>
-                  <div>
-                    <h4 className="mono text-[9px] text-emerald">The solution</h4>
-                    <p className="mt-3 text-sm font-medium leading-7 text-copy-strong">{discipline.solution}</p>
-                  </div>
-                </div>
-                <h4 className="mono mt-8 text-[9px] text-emerald">Capabilities</h4>
-                <ul className="mt-3 flex flex-wrap gap-2">
-                  {discipline.capabilities.map((capability) => (
-                    <li key={capability} className="border border-line-green bg-cream px-3 py-1.5 text-xs font-medium text-forest">
-                      {capability}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </article>
+      {/* Consistent 2-column grid; rows stretch so paired cards share a height. */}
+      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:gap-5">
+        {disciplines.map((discipline, index) => (
+          <DisciplineTile key={discipline.id} discipline={discipline} index={index} />
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+/** Four pillars feeding a single operating layer. */
+function ArchitectureDiagram() {
+  return (
+    <figure data-reveal className="mx-auto mt-12 max-w-4xl lg:mt-16">
+      <ol className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {disciplines.map((discipline, index) => {
+          const Icon = icons[discipline.id] ?? Layers;
+          return (
+            <li key={discipline.id} className="group relative flex flex-col items-center">
+              <a
+                href={`#${disciplineAnchorId(discipline.id)}`}
+                className="flex w-full flex-col items-center gap-2 rounded-lg border border-hairline bg-surface px-3 py-4 text-center shadow-xs transition-[border-color,box-shadow,transform] duration-(--duration-base) hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-md"
+              >
+                <Icon
+                  aria-hidden="true"
+                  className={cn('size-5', discipline.id === BRAND_ID ? 'text-brand-600' : 'text-accent-700')}
+                  strokeWidth={1.75}
+                />
+                <span className="text-small font-semibold text-fg">{discipline.title}</span>
+              </a>
+              {/* Connector with a pulse of "data" flowing down into the operating layer. */}
+              <span aria-hidden="true" className="relative h-6 w-px bg-linear-to-b from-accent-300 to-accent-500">
+                <span
+                  className={cn(
+                    'animate-flow absolute -left-[2.5px] top-0 size-1.5 rounded-full',
+                    discipline.id === BRAND_ID ? 'bg-brand-500' : 'bg-accent-500',
+                  )}
+                  style={{ '--i': index } as CSSProperties}
+                />
+              </span>
+            </li>
           );
         })}
-      </div>
+      </ol>
+      <figcaption className="relative flex items-center justify-center gap-2.5 overflow-hidden rounded-lg bg-ink-950 px-5 py-4 text-small font-semibold text-fg-inverse shadow-md">
+        <span aria-hidden="true" className="absolute inset-y-0 left-1/4 w-1/2 bg-accent-500/20 blur-2xl" />
+        <Layers aria-hidden="true" className="relative size-4 text-accent-300" />
+        <span className="relative">One architecture · no silos</span>
+      </figcaption>
+    </figure>
+  );
+}
 
-      <p className="mono mt-12 flex items-center gap-3 text-[9px] text-copy-muted">
-        <Leaf aria-hidden="true" className="h-4 w-4 text-emerald" />
-        One architecture / no silos
-      </p>
-    </Section>
+function DisciplineTile({ discipline, index }: { discipline: Discipline; index: number }) {
+  const inverse = discipline.id === FEATURED_ID;
+  const Icon = icons[discipline.id] ?? Layers;
+  const label = inverse ? 'text-accent-300' : 'text-accent-700';
+  const muted = inverse ? 'text-fg-inverse-muted' : 'text-fg-muted';
+
+  return (
+    <ToneContext.Provider value={inverse ? 'inverse' : 'light'}>
+      <article
+        id={disciplineAnchorId(discipline.id)}
+        aria-labelledby={`${disciplineAnchorId(discipline.id)}-title`}
+        data-reveal
+        style={{ '--reveal-index': index % 2 } as CSSProperties}
+        className={cn(
+          'flex h-full flex-col rounded-2xl border p-6 transition-shadow duration-(--duration-base) target:shadow-glow sm:p-8 lg:p-10',
+          inverse ? 'border-ink-800 bg-ink-900 text-fg-inverse' : 'border-hairline bg-surface shadow-xs',
+        )}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <IconTile icon={Icon} size="lg" tone={discipline.id === BRAND_ID ? 'brand' : 'accent'} />
+          <span className={cn('text-caption font-semibold tabular-nums', inverse ? 'text-fg-inverse-subtle' : 'text-fg-subtle')}>
+            {discipline.number} / {String(disciplines.length).padStart(2, '0')}
+          </span>
+        </div>
+        <h3 id={`${disciplineAnchorId(discipline.id)}-title`} className={cn('mt-6 text-h3', inverse ? 'text-fg-inverse' : 'text-fg')}>
+          {discipline.title}
+        </h3>
+
+        <dl className="mb-8 mt-6 grid gap-5">
+          <div>
+            <dt className={cn('text-eyebrow uppercase', label)}>The logic</dt>
+            <dd className={cn('mt-2 text-body', muted)}>{discipline.logic}</dd>
+          </div>
+          <div>
+            <dt className={cn('text-eyebrow uppercase', label)}>The solution</dt>
+            <dd className={cn('mt-2 text-body font-medium', inverse ? 'text-fg-inverse' : 'text-fg')}>{discipline.solution}</dd>
+          </div>
+        </dl>
+
+        {/* mt-auto pins the capabilities to the bottom of the card. */}
+        <div className={cn('mt-auto border-t pt-6', inverse ? 'border-hairline-inverse' : 'border-hairline')}>
+          <h4 className={cn('text-eyebrow uppercase', label)}>Capabilities</h4>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {discipline.capabilities.map((capability) => (
+              <li key={capability}>
+                <Badge tone="neutral">{capability}</Badge>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </article>
+    </ToneContext.Provider>
   );
 }

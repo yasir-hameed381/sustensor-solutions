@@ -1,42 +1,38 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+
 import { cn } from '@/lib/utils';
-import { cva, type VariantProps } from 'class-variance-authority';
 
-const badgeVariants = cva(
-  // @replit
-  // Whitespace-nowrap: Badges should never wrap.
-  'whitespace-nowrap inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2' +
-    ' hover-elevate ',
-  {
-    variants: {
-      variant: {
-        default:
-          // @replit shadow-xs instead of shadow, no hover because we use hover-elevate
-          'border-transparent bg-primary text-primary-foreground shadow-xs',
-        secondary:
-          // @replit no hover because we use hover-elevate
-          'border-transparent bg-secondary text-secondary-foreground',
-        destructive:
-          // @replit shadow-xs instead of shadow, no hover because we use hover-elevate
-          'border-transparent bg-destructive text-destructive-foreground shadow-xs',
-        // @replit shadow-xs" - use badge outline variable
-        outline: 'text-foreground border [border-color:var(--badge-outline)]',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  },
-);
+import { useTone } from './tone';
 
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+const LIGHT = {
+  accent: 'border-accent-100 bg-accent-50 text-accent-800',
+  neutral: 'border-hairline bg-canvas text-fg-muted',
+  sand: 'border-sand-300 bg-surface text-sand-700',
+} as const;
 
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
-  );
+const INVERSE = {
+  accent: 'border-accent-400/30 bg-accent-400/10 text-accent-300',
+  neutral: 'border-hairline-inverse bg-white/5 text-fg-inverse-muted',
+  sand: 'border-sand-300/30 bg-sand-300/10 text-sand-300',
+} as const;
+
+interface BadgeProps {
+  tone?: keyof typeof LIGHT;
+  className?: string;
+  children: ReactNode;
 }
 
-export { Badge, badgeVariants };
+export function Badge({ tone = 'accent', className, children }: BadgeProps) {
+  const inverse = useTone() === 'inverse';
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-caption font-medium',
+        (inverse ? INVERSE : LIGHT)[tone],
+        className,
+      )}
+    >
+      {children}
+    </span>
+  );
+}

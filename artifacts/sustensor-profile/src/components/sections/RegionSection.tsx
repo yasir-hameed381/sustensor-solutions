@@ -1,55 +1,79 @@
+import type { CSSProperties } from 'react';
+import { Globe2, Landmark, Rocket, TrendingDown } from 'lucide-react';
+
 import { copy } from '@/content/copy';
 import { SECTION_IDS } from '@/content/sections';
 
-import { Eyebrow } from '../shared/Eyebrow';
-import { Section } from '../shared/Section';
+import { Badge } from '../ui/Badge';
+import { Eyebrow } from '../ui/Eyebrow';
+import { Accent, Heading } from '../ui/Heading';
+import { IconTile } from '../ui/IconTile';
+import { Section } from '../ui/Section';
+import { RegionRadar } from './region/RegionRadar';
 
-export function RegionSection({ number }: { number: string }) {
+// Same order as copy.region.pillars: scaling, local content, emissions.
+const pillarIcons = [Rocket, Landmark, TrendingDown];
+
+export function RegionSection() {
   const { region } = copy;
 
   return (
-    <Section id={SECTION_IDS.region} labelledBy="region-heading" tone="forest" className="overflow-hidden">
-      <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24">
-        <div className="reveal-on-scroll relative" data-reveal>
-          <div
-            aria-hidden="true"
-            className="absolute -left-12 -top-14 h-[300px] w-[300px] rounded-full border border-teal/35 sm:h-[480px] sm:w-[480px]"
-          />
-          <div className="relative">
-            <Eyebrow onDark>{`${number} / The regional lens`}</Eyebrow>
-            <h2 id="region-heading" className="display mt-7 max-w-[600px] text-[clamp(2.8rem,5.5vw,6rem)] font-semibold leading-[0.9]">
-              {region.heading} <span className="text-mint">{region.headingAccent}</span>
-            </h2>
-            <p className="mt-10 flex items-center gap-4">
-              <span aria-hidden="true" className="h-[5px] w-20 bg-gold" />
-              <span className="mono text-[9px] text-sage">{region.markets}</span>
-            </p>
-          </div>
+    <Section
+      id={SECTION_IDS.region}
+      labelledBy="region-heading"
+      variant="ink"
+      backdrop={
+        <div aria-hidden="true" className="absolute inset-0 -z-10">
+          <div className="bg-grid-inverse absolute inset-0 opacity-40 mask-fade-radial-l" />
+          <div className="absolute -left-40 top-10 size-128 rounded-full bg-accent-500/10 blur-3xl" />
         </div>
-
-        <div className="reveal-on-scroll reveal-delay-1 flex flex-col justify-end lg:pb-3" data-reveal>
-          <p className="max-w-[650px] text-[17px] leading-8 text-on-dark sm:text-xl sm:leading-9">{region.body}</p>
-          <dl className="mt-12 grid grid-cols-2 border-t border-teal/50 pt-5">
+      }
+    >
+      <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div data-reveal className="lg:col-span-6">
+          <Eyebrow>The regional lens</Eyebrow>
+          <Heading id="region-heading" size="h1" className="mt-4">
+            {region.heading} <Accent tone="brand">{region.headingAccent}</Accent>
+          </Heading>
+          <Badge className="mt-6">
+            <Globe2 aria-hidden="true" className="size-3.5" />
+            {region.markets}
+          </Badge>
+          <p className="mt-8 text-lead text-fg-inverse-muted">{region.body}</p>
+          <dl className="mt-10 grid grid-cols-2 gap-6 border-t border-hairline-inverse pt-6">
             <div>
-              <dt className="mono text-[9px] text-sage">Calibrated for</dt>
-              <dd className="mt-3 text-sm text-ivory">{region.calibratedFor}</dd>
+              <dt className="text-eyebrow uppercase text-fg-inverse-subtle">Calibrated for</dt>
+              <dd className="mt-2 text-h4 text-fg-inverse">{region.calibratedFor}</dd>
             </div>
             <div>
-              <dt className="mono text-[9px] text-sage">Aligned with</dt>
-              <dd className="mt-3 text-sm text-ivory">{region.alignedWith}</dd>
+              <dt className="text-eyebrow uppercase text-fg-inverse-subtle">Aligned with</dt>
+              <dd className="mt-2 text-h4 text-fg-inverse">{region.alignedWith}</dd>
             </div>
           </dl>
         </div>
-      </div>
 
-      <ul className="mt-16 grid gap-4 md:grid-cols-3">
-        {region.pillars.map((pillar) => (
-          <li key={pillar.title} className="border border-teal/40 p-6">
-            <h3 className="mono text-[10px] font-bold text-mint">{pillar.title}</h3>
-            <p className="mt-3 text-sm leading-6 text-on-dark">{pillar.text}</p>
-          </li>
-        ))}
-      </ul>
+        <div className="grid content-center gap-4 lg:col-span-6">
+          <div data-reveal>
+            <RegionRadar />
+          </div>
+        <ul className="grid gap-4">
+          {region.pillars.map((pillar, index) => (
+            <li
+              key={pillar.title}
+              data-reveal
+              style={{ '--reveal-index': index } as CSSProperties}
+              className="spotlight spotlight-inverse group flex gap-5 rounded-xl border border-hairline-inverse bg-white/4 p-5 transition-colors duration-(--duration-base) hover:bg-white/6 sm:p-6"
+            >
+              <IconTile icon={pillarIcons[index]} size="lg" />
+              <div>
+                <h3 className="text-h4 text-fg-inverse">{pillar.title}</h3>
+                <p className="mt-2 text-body text-fg-inverse-muted">{pillar.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+        </div>
+      </div>
     </Section>
   );
 }
