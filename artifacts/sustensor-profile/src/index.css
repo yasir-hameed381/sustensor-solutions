@@ -491,13 +491,18 @@
   z-index: -1;
   background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--color-accent-500) 9%, transparent), transparent 60%);
 }
-/* 1px gradient border, drawn with a mask so it only shows on the edge. */
+/* 1px gradient border, drawn with a mask so it only shows on the edge.
+   Longhands on purpose: the minifier reorders `-webkit-mask` after `-webkit-mask-composite`
+   and drops `exclude` from the `mask` shorthand, which paints the glow over the whole card. */
 .spotlight::after {
   padding: 1px;
   background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), var(--color-accent-500), var(--color-brand-500) 45%, transparent 70%);
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  -webkit-mask-clip: content-box, border-box;
   -webkit-mask-composite: xor;
+  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  mask-clip: content-box, border-box;
+  mask-composite: exclude;
 }
 .spotlight:hover::before,
 .spotlight:hover::after {
