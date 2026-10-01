@@ -44,7 +44,7 @@ export const expertNetwork: Person[] = [
 
 // TODO (PLACEHOLDER): partner descriptions and website links are not yet available. "Sean X" is listed exactly as provided in the brief.
 export const partnerNetwork: Partner[] = [
-  { name: 'Technovez', description: 'Technology delivery partner' },
+  { name: 'Technovez', description: 'Technology delivery partner', url: 'https://www.technovez.com' },
   { name: 'SUCCA Africa', description: 'Regional sustainability partner' },
   { name: 'Sean X', description: 'Strategic advisory partner' },
 ];

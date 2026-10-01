@@ -18,6 +18,7 @@ import { VerdictSection } from '@/components/sections/VerdictSection';
 import { StatusToast } from '@/components/shared/StatusToast';
 import { company } from '@/content/company';
 import type { NavLink } from '@/content/navigation';
+import { sectors } from '@/content/sectors';
 import { solutions } from '@/content/solutions';
 import { usePdfExport } from '@/hooks/usePdfExport';
 import { useRevealOnScroll } from '@/hooks/useRevealOnScroll';
@@ -26,6 +27,7 @@ import { useSpotlight } from '@/hooks/useSpotlight';
 export default function App() {
   const [activeSolutionId, setActiveSolutionId] = useState(solutions[0].id);
   const [showAllSolutions, setShowAllSolutions] = useState(false);
+  const [activeSectorId, setActiveSectorId] = useState(sectors[0].id);
   const [businessCardOpen, setBusinessCardOpen] = useState(false);
   const pdfSourceRef = useRef<HTMLDivElement>(null);
   const { status: pdfStatus, exportPdf } = usePdfExport(pdfSourceRef, company.pdfFileName);
@@ -42,6 +44,7 @@ export default function App() {
   const handleNavigate = useCallback(
     ({ action }: NavLink) => {
       if (action?.type === 'solution') selectSolution(action.id);
+      if (action?.type === 'sector') setActiveSectorId(action.id);
     },
     [selectSolution],
   );
@@ -62,7 +65,7 @@ export default function App() {
             onSelect={selectSolution}
             onShowAllChange={setShowAllSolutions}
           />
-          <SectorsSection />
+          <SectorsSection activeId={activeSectorId} onSelect={setActiveSectorId} />
           <CapabilitiesSection />
           <RegionSection />
           <VerdictSection pdfBusy={pdfBusy} onDownloadProfile={exportPdf} />

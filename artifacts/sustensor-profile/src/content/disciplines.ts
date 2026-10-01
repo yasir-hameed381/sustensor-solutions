@@ -62,14 +62,12 @@ export const disciplines: Discipline[] = [
     solution:
       'We engineer the digital backbone behind procurement and sustainability operations: custom software, ERP integration, cloud data platforms, and decision dashboards, with predictive analytics that future-proof forecasting, asset tracking, and carbon optimisation.',
     capabilities: [
-      'Software Engineering',
-      'ERP Integration',
-      'Cloud Architecture & Data Lakes',
-      'UI/UX for Enterprise Tools',
-      'Dashboard & Reporting',
-      // TODO (PLACEHOLDER): the two items below were added where the brief said "please add".
+      'ERP Implementation',
+      'Cloud & Data Platforms',
+      'Business Intelligence & Dashboards',
       'AI & Predictive Analytics',
-      'Process Automation',
+      'Intelligent Process Automation',
+      'Enterprise UX Design',
     ],
   },
 ];

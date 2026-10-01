@@ -15,7 +15,11 @@ const solutionLinks: NavLink[] = solutions.map((solution) => ({
   action: { type: 'solution', id: solution.id },
 }));
 
-const sectorLinks: NavLink[] = sectors.map((sector) => ({ label: sector.name, href: `#${sectorAnchorId(sector.id)}` }));
+const sectorLinks: NavLink[] = sectors.map((sector) => ({
+  label: sector.name,
+  href: `#${sectorAnchorId(sector.id)}`,
+  action: { type: 'sector', id: sector.id },
+}));
 
 const companyLinks: NavLink[] = [
   { label: 'Who we are', href: `#${SECTION_IDS.about}` },

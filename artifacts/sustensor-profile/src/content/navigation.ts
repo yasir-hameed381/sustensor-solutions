@@ -4,7 +4,7 @@ import { sectors } from './sectors';
 import { solutionMenuOrder, solutions } from './solutions';
 
 /** Optional side effect of a link, e.g. selecting a tab in the section it points to. */
-export type NavAction = { type: 'solution'; id: string };
+export type NavAction = { type: 'solution' | 'sector'; id: string };
 
 export interface NavLink {
   label: string;
@@ -54,7 +54,15 @@ export const primaryNav: NavItem[] = [
     id: 'sector',
     label: 'Sectors',
     sectionHref: anchor(SECTION_IDS.sectors),
-    groups: [{ links: sectors.map((sector) => ({ label: sector.name, href: anchor(sectorAnchorId(sector.id)) })) }],
+    groups: [
+      {
+        links: sectors.map((sector) => ({
+          label: sector.name,
+          href: anchor(sectorAnchorId(sector.id)),
+          action: { type: 'sector', id: sector.id },
+        })),
+      },
+    ],
   },
   {
     id: 'capabilities',

@@ -53,6 +53,8 @@ export interface Sector {
   name: string;
   icon: LucideIcon;
   description: string;
+  /** Three key focus areas, shown in the sector panel. */
+  focus: string[];
 }
 
 export interface Person {
@@ -63,6 +65,17 @@ export interface Person {
   image?: string;
   /** Full LinkedIn profile URL. The LinkedIn button is hidden when missing. */
   linkedInUrl?: string;
+}
+
+/** A live platform delivered by Technovez, the technology delivery partner. */
+export interface PartnerProject {
+  name: string;
+  /** One line shown on the project card. */
+  summary: string;
+  /** Sector the project is listed under (`Sector.id`). */
+  sectorId: string;
+  /** Screenshot path under /public, roughly 2:1; cropped from the top. */
+  image: string;
 }
 
 export interface Partner {

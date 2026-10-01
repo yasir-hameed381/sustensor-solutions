@@ -71,6 +71,9 @@
   --color-sand-500: #d99a1e;
   --color-sand-700: #8a5a00;
 
+  /* Partner brand: Technovez orange, used only for its "Developed by" marker dot. */
+  --color-technovez: #f26b1d;
+
   /* Feedback. */
   --color-danger-50: #fef1f0;
   --color-danger-600: #b42318;
