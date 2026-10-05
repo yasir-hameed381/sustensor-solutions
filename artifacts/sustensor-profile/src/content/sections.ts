@@ -3,15 +3,14 @@ export const SECTION_IDS = {
   about: 'about',
   realityCheck: 'reality-check',
   workflows: 'workflows',
+  /** The interactive demo inside the workflows section; the header's Solutions links land here. */
+  workflowDemo: 'workflow-demo',
   solutions: 'solutions',
   sectors: 'sectors',
   capabilities: 'capabilities',
   region: 'regional-lens',
   verdict: 'verdict',
-  team: 'team',
-  teamLeadership: 'team-leadership',
-  teamExperts: 'team-experts',
-  teamPartners: 'team-partners',
+  partners: 'partners',
   contact: 'contact',
 } as const;
 

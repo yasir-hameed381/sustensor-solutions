@@ -26,7 +26,6 @@ const companyLinks: NavLink[] = [
   { label: 'The reality check', href: `#${SECTION_IDS.realityCheck}` },
   { label: 'Integrated architecture', href: `#${SECTION_IDS.capabilities}` },
   { label: 'Regional vision', href: `#${SECTION_IDS.region}` },
-  { label: 'Our team', href: `#${SECTION_IDS.team}` },
 ];
 
 export function SiteFooter({ onNavigate }: { onNavigate: (link: NavLink) => void }) {
@@ -44,7 +43,7 @@ export function SiteFooter({ onNavigate }: { onNavigate: (link: NavLink) => void
       <Container className="grid gap-12 py-16 lg:grid-cols-12 lg:gap-8 lg:py-20">
         <div className="lg:col-span-4">
           <BrandMark />
-          <p className="mt-5 max-w-xs text-small">{company.focus}</p>
+          <p className="mt-5 max-w-xs text-small">{company.legalName}</p>
           <ul className="mt-6 space-y-3 text-small">
             <li>
               <a href={company.emailUrl} className="inline-flex items-center gap-2.5 hover:text-fg-inverse">

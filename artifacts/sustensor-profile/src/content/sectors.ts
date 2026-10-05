@@ -43,15 +43,16 @@ export const sectors: Sector[] = [
     id: 'government',
     name: 'Government & Public Sector',
     icon: Building2,
-    description: 'Transparent tendering, DoA compliance, and annual procurement planning for ministries, authorities, and agencies.',
-    focus: ['Transparent tendering', 'DoA compliance', 'Annual procurement planning'],
+    description:
+      'Transparent tendering, DoA compliance, vendor management, and annual procurement planning for ministries, authorities, and agencies.',
+    focus: ['Transparent tendering', 'DoA compliance', 'Annual procurement planning', 'Vendor management'],
   },
   {
     id: 'construction-real-estate',
     name: 'Construction & Real Estate',
     icon: HardHat,
-    description: 'Giga-project supply chains, contractor performance, and embodied-carbon tracking from tender to handover.',
-    focus: ['Giga-project supply chains', 'Contractor performance', 'Embodied-carbon tracking'],
+    description: 'Giga-project supply chains, contractor ESG performance, and embodied-carbon tracking from tender to handover.',
+    focus: ['Giga-project supply chains', 'Contractor ESG performance', 'Embodied-carbon tracking'],
   },
   {
     id: 'manufacturing',

@@ -1,28 +1,27 @@
-// TODO (PLACEHOLDER): the revision brief lists "About" in the menu but provides no copy. Replace everything in this file with final text.
 export const about = {
   heading: 'Who We Are',
   intro:
-    'Sustensor Solutions is a Riyadh-based advisory and technology firm. We help organisations turn sustainability, procurement, and digital ambitions into measurable operating results, combining practitioner experience with purpose-built software.',
+    'Sustensor Solutions is a Riyadh-based technology firm. We help organisations turn their digital ambitions into measurable operating results, combining practitioner experience with purpose-built software.',
   mission: {
     title: 'Our Mission',
-    text: 'To make sustainable, well-governed procurement the standard way of doing business across the region.',
+    text: 'To drive systemic change across the region by making sustainable, well-governed procurement the standard for commercial resilience.',
   },
   vision: {
     title: 'Our Vision',
-    text: 'A regional economy where every purchasing decision strengthens long-term value, local content, and the environment.',
+    text: 'A regional business ecosystem where sustainable, well-governed procurement is the foundational driver of both corporate growth and environmental integrity.',
   },
   principles: [
     {
       title: 'Practitioner-led',
-      text: 'Our team has run procurement and sustainability functions, not just advised on them.',
+      text: 'Our foundation is built on real-world operational experience. We bring insights from actually leading procurement functions, bridging the gap between theory and execution.',
     },
     {
-      title: 'Evidence over promises',
-      text: 'Every recommendation is backed by data your auditors and board can verify.',
+      title: 'Measurable outcomes',
+      text: 'Data-backed improvements that deliver undeniable proof of value to your stakeholders and auditors.',
     },
     {
-      title: 'Built for the region',
-      text: 'Global frameworks, calibrated to Saudi Vision 2030, LCGPA, and local governance.',
+      title: 'Calibrated for the region',
+      text: 'We seamlessly integrate global procurement best practices with deep regional insight, ensuring full alignment with the strategic ambitions of Saudi Vision 2030.',
     },
   ],
 };

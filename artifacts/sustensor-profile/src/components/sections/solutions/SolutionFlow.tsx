@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'react';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, CornerDownRight } from 'lucide-react';
 
 import type { ProcessOutput, ProcessStep } from '@/content/types';
+import { cn } from '@/lib/utils';
 
 interface SolutionFlowProps {
   steps: ProcessStep[];
@@ -10,9 +11,14 @@ interface SolutionFlowProps {
 
 /** "How it works": a connected timeline, vertical on small screens and horizontal from `lg`. */
 export function SolutionFlow({ steps, outputs }: SolutionFlowProps) {
+  // Longer flows (e.g. P2P's seven stages) use a tighter title size so every step fits on one row.
+  const compact = steps.length > 4;
   return (
     <div data-reveal className="rounded-xl border border-hairline bg-canvas p-5 sm:p-8">
-      <ol className="relative grid gap-8 lg:grid-cols-4 lg:gap-6">
+      <ol
+        style={{ '--flow-cols': `repeat(${steps.length}, minmax(0, 1fr))` } as CSSProperties}
+        className={cn('relative grid gap-8 lg:grid-cols-(--flow-cols)', compact ? 'lg:gap-4' : 'lg:gap-6')}
+      >
         {/* Connector line: vertical through the nodes on mobile, horizontal from lg. */}
         <span
           aria-hidden="true"
@@ -36,8 +42,21 @@ export function SolutionFlow({ steps, outputs }: SolutionFlowProps) {
                     <Accent aria-hidden="true" className="size-3.5" strokeWidth={2} />
                   </span>
                 </div>
-                <h5 className="mt-4 text-h4 text-fg">{step.title}</h5>
+                <h5 className={cn('mt-4 text-fg', compact ? 'text-body font-semibold' : 'text-h4')}>{step.title}</h5>
                 {step.detail && <p className="mt-1.5 text-small text-fg-muted">{step.detail}</p>}
+                {step.branches && (
+                  <ul className="mt-3 space-y-1.5" aria-label={`${step.title}: sub-steps`}>
+                    {step.branches.map((branch) => (
+                      <li
+                        key={branch}
+                        className="flex items-center gap-1.5 rounded-md border border-hairline bg-surface px-2 py-1 text-caption font-medium text-fg-muted"
+                      >
+                        <CornerDownRight aria-hidden="true" className="size-3 shrink-0 text-accent-600" />
+                        {branch}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </li>
           );

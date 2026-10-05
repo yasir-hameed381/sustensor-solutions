@@ -27,12 +27,14 @@ import {
   Telescope,
   TrendingUp,
   UserSearch,
+  Users,
   Wallet,
   Workflow,
 } from 'lucide-react';
 
 import type { Solution } from './types';
 
+// Order matters: it drives the Solutions tabs, the "In motion" workflows, and the footer.
 // TODO (PLACEHOLDER): the `detail` captions on the process steps of solutions 01–04 are draft copy; replace with final wording.
 export const solutions: Solution[] = [
   {
@@ -40,13 +42,13 @@ export const solutions: Solution[] = [
     number: '01',
     title: 'Vendor Management',
     menuLabel: 'Vendor Onboarding & Management',
-    badge: 'Core Enterprise Lifecycle',
+    badge: 'AI Vendor Platform',
     subtitle: 'Global Procurement & Vendor Solutions',
     summary:
       'Our enterprise equips modern organisations with agile, transparent, and automated vendor management systems. By bridging legacy enterprise resource planning with next-generation artificial intelligence, we eliminate procurement friction, enforce rigorous multi-jurisdiction compliance, and optimise vendor performance in real time.',
     process: [
       { title: 'Vetting & Qualification', detail: 'KYC checks · Supplier pre-qualification', icon: UserSearch, accent: CircleCheck },
-      { title: 'Digital Onboarding & Contracting', detail: 'Self-service portal · e-Signature', icon: FilePenLine, accent: Handshake },
+      { title: 'Digital Onboarding', detail: 'Self-service portal · e-Signature', icon: FilePenLine, accent: Handshake },
       { title: 'Performance & Risk Assessment', detail: 'Scorecards · Risk monitoring', icon: Gauge, accent: ShieldCheck },
       { title: 'Lifecycle Optimisation & Offboarding', detail: 'Renewals · Structured retirement', icon: TrendingUp, accent: FolderArchive },
     ],
@@ -84,86 +86,44 @@ export const solutions: Solution[] = [
       },
       {
         label: 'Fast Deployment',
-        detail: 'Cloud-first modular integration designed to plug seamlessly into existing accounting workflows.',
-      },
-    ],
-  },
-  {
-    id: 'contract-sustainability',
-    number: '02',
-    title: 'Contract Sustainability Tracking',
-    menuLabel: 'Contract Sustainability Tracking',
-    badge: 'Scope 3 & Green Governance',
-    subtitle: 'Embedding ESG Accountability into Commercial Agreements',
-    summary:
-      'With the vast majority of corporate carbon footprints embedded within supplier networks, sustainability cannot remain an isolated policy. We transform static ESG pledges into active contractual covenants, continuous green SLA tracking, dual-submission low-carbon tender evaluations, and dynamic supplier incentive frameworks.',
-    process: [
-      { title: 'Establishing Baseline Criteria', detail: 'ESG clauses · Supplier code of conduct', icon: ClipboardList, accent: Leaf },
-      { title: 'Defining Key Sustainability Metrics', detail: 'Emissions · Local content · Labour KPIs', icon: Earth, accent: MapPin },
-      { title: 'Real-Time Performance Analytics', detail: 'Live dashboards · Early warnings', icon: LayoutDashboard, accent: ChartLine },
-      { title: 'Continuous Improvement & Reporting', detail: 'Corrective actions · Compliance certificates', icon: RefreshCw, accent: Award },
-    ],
-    deliverables: [
-      {
-        area: 'Green SLA & ESG Covenants',
-        scope:
-          'Clause-level tracking of decarbonisation milestones, supplier code of conduct adherence, and automated covenant audits.',
-        impact: 'Eliminates supplier greenwashing and enforces rigorous contractual accountability across strategic agreements.',
-      },
-      {
-        area: 'Dual-Submission Low-Carbon Tendering',
-        scope:
-          'Systematic tender evaluation architecture comparing commercial baseline submissions against audited low-carbon and circular alternatives.',
-        impact: 'Drives substantial Scope 3 carbon intensity reductions at contract award stage.',
-      },
-      {
-        area: 'Performance-Linked Incentive Models',
-        scope:
-          'Contractual rebate, bonus, and penalty mechanisms tied to verified emissions milestones, renewable energy thresholds, and CBAM exposure.',
-        impact: 'Accelerates supplier decarbonisation velocity compared to voluntary targets.',
-      },
-      {
-        area: 'Supply Chain Traceability & Due Diligence',
-        scope:
-          'Algorithmic sub-tier supplier mapping ensuring full compliance with CSDDD, local content mandates (LCGPA), and ethical labour standards.',
-        impact: 'Eliminates third-party compliance liabilities with continuous audit-ready data verification.',
-      },
-    ],
-    pillars: [
-      {
-        label: 'Horizontal ESG Governance',
-        detail: 'Treats sustainability as an enterprise-wide commercial operating layer rather than an isolated silo.',
-      },
-      {
-        label: 'Pragmatic Milestone Tracking',
-        detail: 'Delivers measurable supplier progress with actionable data benchmarks across multi-tier networks.',
-      },
-      {
-        label: 'Regulatory Defensibility',
-        detail: 'Automated audit documentation protecting boards from greenwashing penalties and regulatory scrutiny.',
+        detail: 'Cloud-first modular integration designed to plug seamlessly into existing ERP workflows.',
       },
     ],
   },
   {
     id: 'procure-to-pay',
-    number: '03',
+    number: '02',
     title: 'Procure-to-Pay (P2P) Automation',
     menuLabel: 'Procure-to-Pay (P2P) Automation',
     badge: 'Closed-Loop Cloud Platform',
-    subtitle: 'Source-to-Pay (S2P) Automation & Enterprise Category Intelligence',
+    subtitle: 'P2P Automation & Enterprise Category Intelligence',
     summary:
       'Built by procurement practitioners for commercial leadership, our cloud-native operations suite replaces manual approvals and fragmented legacy tools with a seamless, automated workflow spanning requisition, category management, DoA compliance, and bidirectional ERP synchronisation.',
     process: [
-      { title: 'Request for Proposal & Bidding', detail: 'e-Sourcing · Bid evaluation', icon: Files, accent: Telescope },
-      { title: 'Requisition & Approval Workflow', detail: 'DoA routing · Budget checks', icon: FilePenLine, accent: CheckCheck },
-      { title: 'Purchase Order Management', detail: 'PO issue · Goods receipt', icon: ClipboardCheck, accent: Package },
-      { title: 'Invoicing & Payment Settlement', detail: '3-way match · Payment release', icon: Receipt, accent: Landmark },
+      { title: 'Purchase Requisition (PR) Intake & Routing', detail: 'e-Sourcing', icon: ClipboardList, accent: Workflow },
+      {
+        title: 'PR Review & Approval Workflow',
+        detail: 'Procurement, Finance routing',
+        icon: FilePenLine,
+        accent: CheckCheck,
+        branches: ['Scope Reviews', 'Budget & Planning checks'],
+      },
+      { title: 'RFx Preparation & Floating', detail: 'DoA routing', icon: Files, accent: Telescope },
+      {
+        title: 'Bid Evaluations',
+        detail: 'Buyer coordination',
+        icon: ScanSearch,
+        accent: ChartPie,
+        branches: ['Technical Evaluation', 'Commercial Evaluation'],
+      },
+      { title: 'Internal Committee Reviews', detail: 'DoA routing', icon: Users, accent: ShieldCheck },
+      { title: 'Award Routing & Contract/PO', detail: 'PO issue', icon: Award, accent: Package },
+      { title: 'Invoicing & Payment Settlement', detail: '3-way match', icon: Receipt, accent: Landmark },
     ],
     deliverables: [
       {
-        area: 'Autonomous Source-to-Pay (S2P)',
-        scope:
-          'Guided requisitioning, digital RFx e-sourcing, reverse auctioning, catalogue management, and automated order dispatch.',
+        area: 'Autonomous P2P',
+        scope: 'Guided requisitioning, digital RFx e-sourcing, catalogue management, and automated PO issuance.',
         impact: 'Dramatically compresses operational cycle times across all procurement events.',
       },
       {
@@ -196,6 +156,61 @@ export const solutions: Solution[] = [
       {
         label: 'Scalable Cloud Architecture',
         detail: 'Microservices-based deployment supporting multi-subsidiary and holding company structures.',
+      },
+    ],
+  },
+  {
+    id: 'contract-sustainability',
+    number: '03',
+    title: 'Contract Sustainability Tracking',
+    menuLabel: 'Contract Sustainability Tracking',
+    badge: 'ESG Governance',
+    subtitle: 'Embedding ESG Accountability into Commercial Agreements',
+    summary:
+      'With the vast majority of corporate carbon footprints embedded within supplier networks, sustainability cannot remain an isolated policy. We transform static ESG pledges into active contractual covenants, continuous green SLA tracking, and dynamic supplier incentive frameworks.',
+    process: [
+      { title: 'Establishing Baseline Criteria', detail: 'ESG clauses · Supplier code of conduct', icon: ClipboardList, accent: Leaf },
+      { title: 'Defining Key Sustainability Metrics', detail: 'Emissions · Local content · Labour KPIs', icon: Earth, accent: MapPin },
+      { title: 'Real-Time Performance Analytics', detail: 'Live dashboards · Early warnings', icon: LayoutDashboard, accent: ChartLine },
+      { title: 'Continuous Improvement & Reporting', detail: 'Corrective actions · Compliance certificates', icon: RefreshCw, accent: Award },
+    ],
+    deliverables: [
+      {
+        area: 'Pre-Award ESG Baseline',
+        scope: 'Systematic addition of ESG KPIs in the Capex contracts to build the baseline during negotiation.',
+        impact: 'Drives substantial Scope 3 carbon intensity reductions at contract award stage.',
+      },
+      {
+        area: 'Green SLA & ESG Covenants',
+        scope:
+          'Clause-level tracking of decarbonisation milestones, supplier code of conduct adherence, and automated covenant audits.',
+        impact: 'Eliminates supplier greenwashing and enforces rigorous contractual accountability across strategic agreements.',
+      },
+      {
+        area: 'Performance-Linked Incentive Models',
+        scope:
+          'Contractual rebate, bonus, and penalty mechanisms tied to verified emissions milestones, renewable energy thresholds, and CBAM exposure.',
+        impact: 'Accelerates supplier decarbonisation velocity compared to voluntary targets.',
+      },
+      {
+        area: 'Supply Chain Traceability & Due Diligence',
+        scope:
+          'Algorithmic sub-tier supplier mapping ensuring full compliance with CSDDD, local content mandates (LCGPA), and ethical labour standards.',
+        impact: 'Eliminates third-party compliance liabilities with continuous audit-ready data verification.',
+      },
+    ],
+    pillars: [
+      {
+        label: 'Horizontal ESG Governance',
+        detail: 'Treats sustainability as an enterprise-wide commercial operating layer rather than an isolated silo.',
+      },
+      {
+        label: 'Pragmatic Milestone Tracking',
+        detail: 'Delivers measurable supplier progress with actionable data benchmarks across multi-tier networks.',
+      },
+      {
+        label: 'Regulatory Defensibility',
+        detail: 'Automated audit documentation protecting boards from greenwashing penalties and regulatory scrutiny.',
       },
     ],
   },
@@ -263,8 +278,8 @@ export const solutions: Solution[] = [
 
 /** Order of items in the header's Solutions menu (as specified in the revision brief). */
 export const solutionMenuOrder = [
-  'contract-sustainability',
   'vendor-management',
   'procure-to-pay',
+  'contract-sustainability',
   'annual-procurement-planning',
 ] as const;

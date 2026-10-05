@@ -1,5 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
+
 import { CountUp } from './CountUp';
 import { IconTile } from './IconTile';
 
@@ -16,7 +18,7 @@ export function GlanceCard({ title, items }: { title: string; items: GlanceItem[
     <div className="spotlight group relative overflow-hidden rounded-2xl border border-hairline bg-surface p-5 shadow-sm sm:p-6">
       <div aria-hidden="true" className="absolute -right-10 -top-10 size-40 rounded-full bg-accent-100/60 blur-2xl" />
       <p className="relative text-eyebrow uppercase text-fg-subtle">{title}</p>
-      <dl className="relative mt-4 grid grid-cols-3 gap-3">
+      <dl className={cn('relative mt-4 grid gap-3', items.length === 2 ? 'grid-cols-2' : 'grid-cols-3')}>
         {items.map(({ value, label, icon, tone }) => (
           // dt precedes dd in the markup; flex order shows the figure above its label.
           <div key={label} className="flex flex-col rounded-lg border border-hairline bg-canvas p-3">

@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react';
-import { ArrowRight, Boxes, Building2, CheckCircle2, Flag, Network, type LucideIcon } from 'lucide-react';
+import { Boxes, Building2, CheckCircle2, Flag, Network, type LucideIcon } from 'lucide-react';
 
-import { company } from '@/content/company';
 import { copy } from '@/content/copy';
 import { disciplines } from '@/content/disciplines';
 import { frameworks } from '@/content/frameworks';
@@ -14,7 +13,6 @@ import { solutions } from '@/content/solutions';
 import { ButtonLink } from '../ui/Button';
 import { CountUp } from '../ui/CountUp';
 import { Container } from '../ui/Container';
-import { Eyebrow } from '../ui/Eyebrow';
 import { Accent } from '../ui/Heading';
 import { HeroDashboard } from './hero/HeroDashboard';
 
@@ -41,31 +39,42 @@ export function HeroSection() {
 
       <Container className="grid items-center gap-14 pb-16 pt-[calc(var(--spacing-header)+3rem)] lg:grid-cols-12 lg:gap-10 lg:pb-20 lg:pt-[calc(var(--spacing-header)+4.5rem)]">
         <div className="lg:col-span-6">
-          <div className="hero-enter" style={enter(0)}>
-            <Eyebrow>{copy.hero.eyebrow}</Eyebrow>
-          </div>
-          <h1 id="hero-heading" className="hero-enter mt-6 text-display text-fg" style={enter(1)}>
-            Make the case for a better, <Accent>sustainable</Accent> future.
+          <h1 id="hero-heading" className="hero-enter text-display text-fg" style={enter(1)}>
+            Make the case for a better,{' '}
+            <em className="italic">
+              <Accent>sustainable</Accent>
+            </em>{' '}
+            future.
           </h1>
           <p className="hero-enter mt-6 max-w-xl text-lead text-fg-muted" style={enter(2)}>
-            {company.focus}
+            {copy.hero.lead}
           </p>
           <div className="hero-enter mt-9 flex flex-wrap gap-3" style={enter(3)}>
-            <ButtonLink href={`#${SECTION_IDS.contact}`} size="lg" icon={ArrowRight} className="w-full sm:w-auto">
-              Book a consultation
-            </ButtonLink>
             <ButtonLink href={`#${SECTION_IDS.solutions}`} variant="secondary" size="lg" className="w-full sm:w-auto">
               Explore solutions
             </ButtonLink>
           </div>
-          <ul className="hero-enter mt-10 flex flex-wrap gap-x-6 gap-y-2 text-small text-fg-muted" style={enter(4)}>
-            {copy.hero.brief.lens.map((item) => (
-              <li key={item} className="flex items-center gap-2">
-                <CheckCircle2 aria-hidden="true" className="size-4 text-brand-600" />
-                {item}
-              </li>
+          {/* The operating brief in short: lens first, then focus. */}
+          <dl className="hero-enter mt-10 space-y-4" style={enter(4)}>
+            {[
+              { label: 'Lens', items: copy.hero.brief.lens },
+              { label: 'Focus', items: copy.hero.brief.focus },
+            ].map(({ label, items }) => (
+              <div key={label}>
+                <dt className="text-eyebrow uppercase text-fg-subtle">{label}</dt>
+                <dd className="mt-2">
+                  <ul className="flex flex-wrap gap-x-6 gap-y-2 text-small text-fg-muted">
+                    {items.map((item) => (
+                      <li key={item} className="flex items-center gap-2">
+                        <CheckCircle2 aria-hidden="true" className="size-4 text-brand-600" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
             ))}
-          </ul>
+          </dl>
         </div>
 
         <div className="hero-enter lg:col-span-6 lg:pl-4" style={enter(3)}>
@@ -104,7 +113,7 @@ export function HeroSection() {
             ))}
           </dl>
 
-          {/* Trust layer: frameworks already named in the site copy, as text badges (no logos). */}
+          {/* Trust layer: frameworks and standards, as text badges (no logos). */}
           <div className="flex flex-col gap-4 border-t border-hairline py-6 lg:flex-row lg:items-center lg:gap-8">
             <p id="frameworks-label" className="shrink-0 text-eyebrow uppercase text-fg-subtle">
               Frameworks &amp; standards we work with

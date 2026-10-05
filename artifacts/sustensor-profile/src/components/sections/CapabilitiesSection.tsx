@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { Cloud, Cpu, Leaf, Layers, ShoppingCart, type LucideIcon } from 'lucide-react';
+import { Cloud, Cpu, Layers, ShoppingCart, type LucideIcon } from 'lucide-react';
 
 import { disciplines } from '@/content/disciplines';
 import { disciplineAnchorId, SECTION_IDS } from '@/content/sections';
@@ -13,15 +13,16 @@ import { Section } from '../ui/Section';
 import { ToneContext } from '../ui/tone';
 
 const icons: Record<string, LucideIcon> = {
-  'sustainability-esg': Leaf,
   procurement: ShoppingCart,
   'saas-solutions': Cloud,
   technology: Cpu,
 };
 
-// Procurement (the longest copy) is the dark feature tile. ESG uses the brand green.
+// Procurement (the longest copy) is the dark feature tile. SaaS uses the brand green.
 const FEATURED_ID = 'procurement';
-const BRAND_ID = 'sustainability-esg';
+const BRAND_ID = 'saas-solutions';
+
+const COUNT_WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
 
 export function CapabilitiesSection() {
   return (
@@ -30,14 +31,14 @@ export function CapabilitiesSection() {
         id="capabilities-heading"
         eyebrow="Capabilities"
         title="The Integrated Sustensor Architecture"
-        lead="Four connected disciplines. One operating view."
+        lead={`${COUNT_WORDS[disciplines.length] ?? disciplines.length} connected disciplines. One operating view.`}
         align="center"
       />
 
       <ArchitectureDiagram />
 
-      {/* Consistent 2-column grid; rows stretch so paired cards share a height. */}
-      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:gap-5">
+      {/* One row of three from lg; cards stretch to a shared height. */}
+      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         {disciplines.map((discipline, index) => (
           <DisciplineTile key={discipline.id} discipline={discipline} index={index} />
         ))}
@@ -46,11 +47,11 @@ export function CapabilitiesSection() {
   );
 }
 
-/** Four pillars feeding a single operating layer. */
+/** The disciplines feeding a single operating layer. */
 function ArchitectureDiagram() {
   return (
     <figure data-reveal className="mx-auto mt-12 max-w-4xl lg:mt-16">
-      <ol className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <ol className="grid grid-cols-3 gap-3">
         {disciplines.map((discipline, index) => {
           const Icon = icons[discipline.id] ?? Layers;
           return (
@@ -101,7 +102,7 @@ function DisciplineTile({ discipline, index }: { discipline: Discipline; index: 
         id={disciplineAnchorId(discipline.id)}
         aria-labelledby={`${disciplineAnchorId(discipline.id)}-title`}
         data-reveal
-        style={{ '--reveal-index': index % 2 } as CSSProperties}
+        style={{ '--reveal-index': index % 3 } as CSSProperties}
         className={cn(
           'flex h-full flex-col rounded-2xl border p-6 transition-shadow duration-(--duration-base) target:shadow-glow sm:p-8 lg:p-10',
           inverse ? 'border-ink-800 bg-ink-900 text-fg-inverse' : 'border-hairline bg-surface shadow-xs',

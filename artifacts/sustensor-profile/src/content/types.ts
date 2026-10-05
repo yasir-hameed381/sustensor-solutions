@@ -7,6 +7,8 @@ export interface ProcessStep {
   icon: LucideIcon;
   /** Small badge icon layered on the main icon. */
   accent: LucideIcon;
+  /** Parallel sub-steps that run beneath this step, e.g. technical and commercial evaluation. */
+  branches?: string[];
 }
 
 export interface ProcessOutput {
@@ -53,7 +55,7 @@ export interface Sector {
   name: string;
   icon: LucideIcon;
   description: string;
-  /** Three key focus areas, shown in the sector panel. */
+  /** Key focus areas (three or four), shown in the sector panel. */
   focus: string[];
 }
 

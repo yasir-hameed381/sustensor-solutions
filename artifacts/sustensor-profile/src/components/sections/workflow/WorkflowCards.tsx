@@ -15,7 +15,6 @@ const vendor = byId('vendor-management');
 const p2p = byId('procure-to-pay');
 const onboarding = vendor.deliverables.find((row) => row.area === 'Vendor Onboarding')!;
 const doa = p2p.deliverables.find((row) => row.area.startsWith('Delegation of Authority'))!;
-const splitDetail = (detail = '') => detail.split('·').map((part) => part.trim());
 
 function ShowcaseCard({ title, text, tone, children }: { title: string; text: string; tone: 'mint' | 'teal'; children: ReactNode }) {
   return (
@@ -145,11 +144,13 @@ function Triangle({ on }: { on: boolean }) {
   );
 }
 
+// Chain labels: the request, its budget check, the approvers, then the award (contract or PO).
+const BUDGET_LABEL = 'Budget checks';
+const AWARD_LABEL = 'Contract/PO';
+
 export function ApprovalChainCard() {
   const [ref, inView] = useInView<HTMLDivElement>();
   const step = useSequence(4, inView);
-  const [, budget] = splitDetail(p2p.process[1].detail); // "DoA routing · Budget checks"
-  const [poIssue] = splitDetail(p2p.process[2].detail); // "PO issue · Goods receipt"
 
   const pill = (active: boolean, reached: boolean) =>
     cn(
@@ -176,7 +177,7 @@ export function ApprovalChainCard() {
           <span className="flex size-6 items-center justify-center rounded-full bg-accent-50 text-accent-700">
             <Receipt className="size-3.5" />
           </span>
-          {budget}
+          {BUDGET_LABEL}
         </span>
         <Triangle on={step > 1} />
         <div className="flex flex-wrap justify-center gap-2">
@@ -194,7 +195,7 @@ export function ApprovalChainCard() {
           <span className="flex size-6 items-center justify-center rounded-full bg-ink-900 text-accent-300">
             <BadgeCheck className="size-3.5" />
           </span>
-          {poIssue}
+          {AWARD_LABEL}
         </span>
       </div>
     </ShowcaseCard>

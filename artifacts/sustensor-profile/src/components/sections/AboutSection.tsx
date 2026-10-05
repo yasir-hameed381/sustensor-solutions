@@ -90,23 +90,34 @@ export function AboutSection() {
             {copy.hero.briefQuote}
           </blockquote>
         </figure>
-        <dl className="grid grid-cols-2 gap-6 border-t border-hairline pt-8 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
-          {brief.map(({ label, items }) => (
-            <div key={label}>
-              <dt className="text-eyebrow uppercase text-fg-subtle">{label}</dt>
-              <dd className="mt-4">
-                <ul className="space-y-3">
-                  {items.map((item) => (
-                    <li key={item} className="flex gap-2.5 text-body font-medium text-fg">
-                      <span aria-hidden="true" className="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" />
-                      {item}
-                    </li>
+        {/* Focus and lens side by side, row by row, so each focus lines up with its lens. */}
+        <div className="border-t border-hairline pt-8 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
+          <table className="w-full">
+            <thead>
+              <tr>
+                {brief.map(({ label }) => (
+                  <th key={label} scope="col" className="w-1/2 pb-1 text-left text-eyebrow font-normal uppercase text-fg-subtle">
+                    {label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {brief[0].items.map((_, row) => (
+                <tr key={row}>
+                  {brief.map(({ label, items }) => (
+                    <td key={label} className="pr-4 pt-3 align-top last:pr-0">
+                      <span className="flex gap-2.5 text-body font-medium text-fg">
+                        <span aria-hidden="true" className="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" />
+                        {items[row]}
+                      </span>
+                    </td>
                   ))}
-                </ul>
-              </dd>
-            </div>
-          ))}
-        </dl>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </Section>
   );

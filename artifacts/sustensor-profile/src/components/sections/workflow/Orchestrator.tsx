@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { ArrowRight, CheckCircle2, CircleDashed, FileCheck2, Pause, Play, PlugZap, type LucideIcon } from 'lucide-react';
+import { ArrowRight, CheckCircle2, CircleDashed, CornerDownRight, FileCheck2, Pause, Play, PlugZap, type LucideIcon } from 'lucide-react';
 
 import { solutions } from '@/content/solutions';
 import type { Solution } from '@/content/types';
@@ -25,16 +25,24 @@ const STAGE_MS = 1000; // time per stage of the graph
 const HOLD_MS = 2200; // pause on the finished graph
 const LEAVE_MS = 450; // dim before switching workflow
 
-// Stages: the four process steps, then the deliverables together (the fan-out).
-const STAGES = 5;
+// Stages per workflow: each process step, then the deliverables together (the fan-out).
+const stageCount = (solution: Solution) => solution.process.length + 1;
+// Stage value meaning "every stage complete", whatever the workflow's length (used for reduced motion).
+const ALL_DONE = Number.MAX_SAFE_INTEGER;
 
 type Phase = 'intro' | 'enter' | 'run' | 'hold' | 'leave';
 
-export function Orchestrator() {
+/** A request from outside (e.g. the header's Solutions menu) to show a workflow; `nonce` repeats the same id. */
+export interface WorkflowRequest {
+  id: string;
+  nonce: number;
+}
+
+export function Orchestrator({ request }: { request?: WorkflowRequest }) {
   const reduced = useRef(false);
   const [phase, setPhase] = useState<Phase>('intro');
   const [activeIndex, setActiveIndex] = useState(0);
-  const [stage, setStage] = useState(-1); // -1: nothing running yet; STAGES: all complete
+  const [stage, setStage] = useState(-1); // -1: nothing running yet; ≥ stages: all complete
   // autoplay: advance to the next workflow after each one finishes.
   // paused: freeze everything mid-run (set by "Pause tour").
   const [autoplay, setAutoplay] = useState(true);
@@ -42,13 +50,14 @@ export function Orchestrator() {
   const [animated, setAnimated] = useState(true);
   const [ref, inView] = useInView<HTMLDivElement>('-15% 0px');
   const solution = solutions[activeIndex];
+  const stages = stageCount(solution);
 
   useEffect(() => {
     reduced.current = prefersReducedMotion();
     if (reduced.current) {
       setAnimated(false);
       setPhase('hold');
-      setStage(STAGES);
+      setStage(ALL_DONE);
       setAutoplay(false);
     }
   }, []);
@@ -71,8 +80,8 @@ export function Orchestrator() {
     } else if (phase === 'run') {
       delay = STAGE_MS;
       next = () => {
-        if (stage + 1 >= STAGES) {
-          setStage(STAGES);
+        if (stage + 1 >= stages) {
+          setStage(stages);
           setPhase('hold');
         } else setStage(stage + 1);
       };
@@ -90,12 +99,18 @@ export function Orchestrator() {
     if (delay === undefined) return;
     const timer = window.setTimeout(next, delay);
     return () => window.clearTimeout(timer);
-  }, [inView, paused, phase, stage, autoplay]);
+  }, [inView, paused, phase, stage, stages, autoplay]);
 
-  const playing = autoplay && !paused;
+  // "Playing" means something is moving: the tour, or a picked workflow still running to its end.
+  const playing = !paused && (autoplay || phase !== 'hold');
   const togglePlaying = () => {
-    setPaused(playing);
-    setAutoplay(!playing);
+    if (playing) {
+      setPaused(true);
+    } else {
+      // Resume where it stopped, then carry on through the other workflows.
+      setPaused(false);
+      setAutoplay(true);
+    }
   };
 
   // Picking a workflow runs that one to the end, then stays on it.
@@ -107,6 +122,13 @@ export function Orchestrator() {
     setStage(-1);
     setPhase('enter');
   };
+
+  // Header menu: open the requested workflow (each click carries a new nonce, so repeats still apply).
+  useEffect(() => {
+    if (!request) return;
+    const index = solutions.findIndex((item) => item.id === request.id);
+    if (index >= 0) choose(index);
+  }, [request]);
 
   const introDone = phase !== 'intro';
 
@@ -129,6 +151,7 @@ export function Orchestrator() {
       />
       <Canvas
         solution={solution}
+        stages={stages}
         stage={stage}
         visible={introDone && phase !== 'leave'}
         panning={phase === 'run' || phase === 'hold'}
@@ -222,7 +245,7 @@ function IntakePanel({ activeIndex, introDone, playing, showTourControl, onChoos
           className="mt-auto inline-flex min-h-11 items-center gap-2 self-start rounded-full px-3 pt-4 text-caption font-semibold text-accent-300 hover:text-fg-inverse"
         >
           {playing ? <Pause aria-hidden="true" className="size-3.5" /> : <Play aria-hidden="true" className="size-3.5" />}
-          {playing ? 'Pause tour' : 'Play tour'}
+          {playing ? 'Pause' : 'Play tour'}
         </button>
       )}
     </div>
@@ -236,13 +259,15 @@ const nodeState = (nodeStage: number, stage: number): NodeState => (stage < node
 
 interface CanvasProps {
   solution: Solution;
+  /** Process steps plus the deliverables fan-out. */
+  stages: number;
   stage: number;
   visible: boolean;
   panning: boolean;
   paused: boolean;
 }
 
-function Canvas({ solution, stage, visible, panning, paused }: CanvasProps) {
+function Canvas({ solution, stages, stage, visible, panning, paused }: CanvasProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [pan, setPan] = useState(0);
@@ -278,9 +303,9 @@ function Canvas({ solution, stage, visible, panning, paused }: CanvasProps) {
     return () => observer.disconnect();
   }, [solution.id]);
 
-  const completed = stage < 0 ? 0 : Math.min(STAGES, stage);
+  const completed = stage < 0 ? 0 : Math.min(stages, stage);
   const deliverables = solution.deliverables.slice(0, 3);
-  const panDuration = (STAGES * STAGE_MS + HOLD_MS) / 1000;
+  const panDuration = (stages * STAGE_MS + HOLD_MS) / 1000;
 
   return (
     <div className="relative isolate overflow-hidden bg-linear-to-br from-accent-600 via-brand-600 to-ink-700 p-4 sm:p-6 lg:col-span-8 lg:p-8">
@@ -292,7 +317,7 @@ function Canvas({ solution, stage, visible, panning, paused }: CanvasProps) {
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white/15 px-5 py-3.5 backdrop-blur-sm">
           <p className="text-h4 text-white">{solution.title}</p>
           <p className="text-caption text-white">
-            <span className="font-semibold tabular-nums">{completed}</span>/{STAGES} stages complete
+            <span className="font-semibold tabular-nums">{completed}</span>/{stages} stages complete
           </p>
         </div>
 
@@ -326,17 +351,21 @@ function Canvas({ solution, stage, visible, panning, paused }: CanvasProps) {
             >
               {solution.process.map((step, index) => (
                 <div key={step.title} className="flex flex-col items-center md:flex-row">
-                  <FlowNode icon={step.icon} title={step.title} meta={step.detail} state={nodeState(index, stage)} />
+                  {/* Sub-steps hang below their node; absolute from md so the row of nodes stays aligned. */}
+                  <div className="relative w-full md:w-auto">
+                    <FlowNode icon={step.icon} title={step.title} meta={step.detail} state={nodeState(index, stage)} />
+                    {step.branches && <SubSteps items={step.branches} lit={stage >= index} />}
+                  </div>
                   <Arrow lit={stage > index} />
                 </div>
               ))}
               {/* Fan-out to deliverables */}
               <div className="flex flex-col items-center md:flex-row md:self-stretch">
-                <BranchLines lit={stage >= STAGES - 1} />
+                <BranchLines lit={stage >= stages - 1} />
                 {/* Phones show two deliverables to keep the stacked graph short; the third appears from md. */}
                 <div className="flex w-full flex-col gap-3 md:w-auto [&>*:nth-child(3)]:hidden md:[&>*:nth-child(3)]:block">
                   {deliverables.map((row) => (
-                    <FlowNode key={row.area} icon={FileCheck2} title={row.area} meta="Deliverable" state={nodeState(STAGES - 1, stage)} variant="deliverable" />
+                    <FlowNode key={row.area} icon={FileCheck2} title={row.area} meta="Deliverable" state={nodeState(stages - 1, stage)} variant="deliverable" />
                   ))}
                 </div>
               </div>
@@ -394,6 +423,29 @@ function FlowNode({
           {pill.label}
         </span>
       </div>
+    </div>
+  );
+}
+
+/** Parallel sub-steps under a node, linked by a short dashed drop. Brighten once the flow reaches the node. */
+function SubSteps({ items, lit }: { items: string[]; lit: boolean }) {
+  return (
+    <div className="mt-2 flex flex-col items-center md:absolute md:inset-x-0 md:top-full">
+      <span aria-hidden="true" className="h-3 border-l border-dashed border-white/60" />
+      <ul className="flex w-full flex-col gap-1.5">
+        {items.map((item) => (
+          <li
+            key={item}
+            className={cn(
+              'flex items-center gap-1.5 rounded-md bg-surface/90 px-2.5 py-1.5 text-micro font-semibold text-fg shadow-xs transition-opacity duration-500',
+              lit ? 'opacity-100' : 'opacity-60',
+            )}
+          >
+            <CornerDownRight aria-hidden="true" className="size-3 shrink-0 text-accent-600" />
+            {item}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

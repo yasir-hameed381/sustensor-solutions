@@ -34,7 +34,8 @@ const anchor = (id: string) => `#${id}`;
 const solutionLinks: NavLink[] = solutionMenuOrder.map((id) => {
   const solution = solutions.find((item) => item.id === id);
   if (!solution) throw new Error(`Unknown solution in menu order: ${id}`);
-  return { label: solution.menuLabel, href: anchor(SECTION_IDS.solutions), action: { type: 'solution', id } };
+  // Lands on the "In motion" demo box itself (not the section heading), which opens this solution's workflow (see App).
+  return { label: solution.menuLabel, href: anchor(SECTION_IDS.workflowDemo), action: { type: 'solution', id } };
 });
 
 const capabilityGroups: NavGroup[] = disciplines
@@ -72,20 +73,5 @@ export const primaryNav: NavItem[] = [
     groups: capabilityGroups,
   },
   { id: 'region', label: 'Region', sectionHref: anchor(SECTION_IDS.region) },
-  {
-    id: 'team',
-    label: 'Our Team',
-    sectionHref: anchor(SECTION_IDS.team),
-    align: 'end',
-    groups: [
-      {
-        links: [
-          { label: 'Leadership team', href: anchor(SECTION_IDS.teamLeadership) },
-          { label: 'Expert network', href: anchor(SECTION_IDS.teamExperts) },
-          { label: 'Partner network', href: anchor(SECTION_IDS.teamPartners) },
-        ],
-      },
-    ],
-  },
   { id: 'contact', label: 'Contact', sectionHref: anchor(SECTION_IDS.contact) },
 ];

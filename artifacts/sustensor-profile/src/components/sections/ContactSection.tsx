@@ -1,22 +1,15 @@
-import { ArrowDownToLine, ArrowUpRight, CreditCard, Loader2, Mail, MapPin, MessageCircle, type LucideIcon } from 'lucide-react';
+import { ArrowUpRight, Mail, MapPin, MessageCircle, type LucideIcon } from 'lucide-react';
 
 import { company } from '@/content/company';
 import { copy } from '@/content/copy';
 import { SECTION_IDS } from '@/content/sections';
 
-import { Button } from '../ui/Button';
 import { Accent, SectionHeading } from '../ui/Heading';
 import { IconTile } from '../ui/IconTile';
 import { Section } from '../ui/Section';
 import { ContactForm } from './contact/ContactForm';
 
-interface ContactSectionProps {
-  pdfBusy: boolean;
-  onDownloadProfile: () => void;
-  onOpenBusinessCard: () => void;
-}
-
-export function ContactSection({ pdfBusy, onDownloadProfile, onOpenBusinessCard }: ContactSectionProps) {
+export function ContactSection() {
   return (
     <Section id={SECTION_IDS.contact} labelledBy="contact-heading" variant="tint">
       <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
@@ -56,27 +49,6 @@ export function ContactSection({ pdfBusy, onDownloadProfile, onOpenBusinessCard 
               </span>
             </li>
           </ul>
-
-          <div className="mt-8 rounded-xl border border-hairline bg-surface p-6">
-            <h3 className="text-h4 text-fg">Company resources</h3>
-            <p className="mt-1 text-small text-fg-muted">Take our capability profile or executive business card with you.</p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Button
-                variant="primary"
-                size="sm"
-                icon={pdfBusy ? Loader2 : ArrowDownToLine}
-                iconPosition="leading"
-                onClick={onDownloadProfile}
-                disabled={pdfBusy}
-                className={pdfBusy ? '[&>svg]:animate-spin' : undefined}
-              >
-                {pdfBusy ? 'Preparing PDF…' : 'Download PDF profile'}
-              </Button>
-              <Button variant="secondary" size="sm" icon={CreditCard} iconPosition="leading" onClick={onOpenBusinessCard}>
-                Business card
-              </Button>
-            </div>
-          </div>
         </div>
 
         <div className="min-w-0 lg:col-span-7">

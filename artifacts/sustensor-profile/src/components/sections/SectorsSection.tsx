@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ArrowRight, ArrowUpRight, CircleCheck } from 'lucide-react';
+import { ArrowUpRight, CircleCheck } from 'lucide-react';
 
 import { SECTION_IDS, sectorAnchorId } from '@/content/sections';
 import { sectors } from '@/content/sectors';
@@ -7,7 +7,6 @@ import { projectsForSector, technovez } from '@/content/technovez';
 import type { PartnerProject, Sector } from '@/content/types';
 import { cn } from '@/lib/utils';
 
-import { ButtonLink } from '../ui/Button';
 import { Accent, SectionHeading } from '../ui/Heading';
 import { IconTile } from '../ui/IconTile';
 import { Section } from '../ui/Section';
@@ -99,7 +98,7 @@ export function SectorsSection({ activeId, onSelect }: SectorsSectionProps) {
   );
 }
 
-/** The selected sector on an ink panel: Sustensor's focus and a consultation prompt, then any partner projects. */
+/** The selected sector on an ink panel: Sustensor's focus, then any partner projects. */
 function SectorDetail({ sector }: { sector: Sector }) {
   const projects = projectsForSector(sector.id);
   const Icon = sector.icon;
@@ -128,21 +127,6 @@ function SectorDetail({ sector }: { sector: Sector }) {
             </li>
           ))}
         </ul>
-
-        {/* Without partner projects below, the prompt sits at the foot of the panel. */}
-        <div
-          className={cn(
-            'flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between',
-            projects.length > 0 ? 'mt-6' : 'mt-6 lg:mt-auto lg:border-t lg:border-hairline-inverse lg:pt-6',
-          )}
-        >
-          <p className="max-w-md text-small text-fg-inverse-muted">
-            Planning procurement, ESG, or digital transformation in {sector.name.toLowerCase()}? We’ll scope it with you.
-          </p>
-          <ButtonLink href={`#${SECTION_IDS.contact}`} variant="primary-inverse" size="sm" icon={ArrowRight} className="self-start sm:self-auto">
-            Book a consultation
-          </ButtonLink>
-        </div>
 
         {projects.length > 0 && <PartnerProjects sectorName={sector.name} projects={projects} />}
       </div>

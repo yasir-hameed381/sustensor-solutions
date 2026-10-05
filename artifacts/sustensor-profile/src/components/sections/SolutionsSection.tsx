@@ -4,7 +4,6 @@ import {
   FileCheck2,
   Handshake,
   Layers,
-  ListChecks,
   Receipt,
   Rows3,
   ShieldCheck,
@@ -71,13 +70,12 @@ export function SolutionsSection({ activeId, showAll, onSelect, onShowAllChange 
             Enterprise <Accent>Solutions</Accent>
           </>
         }
-        lead="Intelligent vendor lifecycle management, contract sustainability tracking, procure-to-pay automation, and annual procurement planning."
+        lead="Intelligent vendor lifecycle management, procure-to-pay automation, contract sustainability tracking, and annual procurement planning."
         aside={
           <GlanceCard
             title="Solutions at a glance"
             items={[
               { value: solutions.length, label: 'Solutions', icon: Layers },
-              { value: solutions.reduce((sum, s) => sum + s.deliverables.length, 0), label: 'Deliverables', icon: ListChecks },
               { value: solutions.reduce((sum, s) => sum + s.pillars.length, 0), label: 'Value pillars', icon: ShieldCheck, tone: 'brand' },
             ]}
           />

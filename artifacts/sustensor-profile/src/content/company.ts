@@ -3,9 +3,9 @@ const email = 'sustensor.solutions@gmail.com';
 
 export const company = {
   name: 'Sustensor Solutions',
+  legalName: 'Sustensor Solutions LLC',
   shortName: 'Sustensor',
   tagline: 'A better, sustainable future',
-  focus: 'Enterprise governance, CIPS procurement and carbon accounting, calibrated for Saudi Vision 2030.',
   location: 'Riyadh, KSA',
   locationLong: 'Riyadh, Kingdom of Saudi Arabia',
   region: 'Saudi Arabia / Middle East',

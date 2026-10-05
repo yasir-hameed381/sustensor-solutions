@@ -5,6 +5,8 @@ export const technovez = {
   name: 'Technovez',
   url: 'https://www.technovez.com',
   projectsUrl: 'https://www.technovez.com/projects',
+  /** White wordmark with an orange mark: use on dark backgrounds only. */
+  logo: '/technovez/logo.webp',
 } as const;
 
 // Source: technovez.com/projects. Summaries are condensed from each project's description there.

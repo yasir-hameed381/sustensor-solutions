@@ -1,21 +1,21 @@
 import type { CSSProperties } from 'react';
-import { Globe2, Landmark, Rocket, TrendingDown } from 'lucide-react';
+import { Landmark, Rocket, ShieldCheck } from 'lucide-react';
 
 import { copy } from '@/content/copy';
 import { SECTION_IDS } from '@/content/sections';
 
-import { Badge } from '../ui/Badge';
 import { Eyebrow } from '../ui/Eyebrow';
 import { Accent, Heading } from '../ui/Heading';
 import { IconTile } from '../ui/IconTile';
 import { Section } from '../ui/Section';
 import { RegionRadar } from './region/RegionRadar';
 
-// Same order as copy.region.pillars: scaling, local content, emissions.
-const pillarIcons = [Rocket, Landmark, TrendingDown];
+// Same order as copy.region.pillars: scaling, local content, ESG compliance.
+const pillarIcons = [Rocket, Landmark, ShieldCheck];
 
 export function RegionSection() {
   const { region } = copy;
+  const [before, after = ''] = region.body.split(region.bodyEmphasis);
 
   return (
     <Section
@@ -35,11 +35,11 @@ export function RegionSection() {
           <Heading id="region-heading" size="h1" className="mt-4">
             {region.heading} <Accent tone="brand">{region.headingAccent}</Accent>
           </Heading>
-          <Badge className="mt-6">
-            <Globe2 aria-hidden="true" className="size-3.5" />
-            {region.markets}
-          </Badge>
-          <p className="mt-8 text-lead text-fg-inverse-muted">{region.body}</p>
+          <p className="mt-8 text-lead text-fg-inverse-muted">
+            {before}
+            <strong className="font-semibold text-fg-inverse">{region.bodyEmphasis}</strong>
+            {after}
+          </p>
           <dl className="mt-10 grid grid-cols-2 gap-6 border-t border-hairline-inverse pt-6">
             <div>
               <dt className="text-eyebrow uppercase text-fg-inverse-subtle">Calibrated for</dt>
