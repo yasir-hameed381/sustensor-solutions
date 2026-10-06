@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { ArrowRight, ChevronDown, X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 
 import { primaryNav, type NavLink } from '@/content/navigation';
-import { SECTION_IDS } from '@/content/sections';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { cn } from '@/lib/utils';
 
 import { BrandMark } from '../shared/BrandMark';
-import { ButtonLink } from '../ui/Button';
 
 interface MobileNavProps {
   onClose: () => void;
@@ -134,19 +132,6 @@ export function MobileNav({ onClose, onFollow }: MobileNavProps) {
             })}
           </ul>
         </nav>
-
-        <div className="border-t border-hairline-inverse p-4 sm:p-6">
-          <ButtonLink
-            href={`#${SECTION_IDS.contact}`}
-            variant="primary-inverse"
-            size="lg"
-            icon={ArrowRight}
-            className="w-full"
-            onClick={() => onFollow({ label: 'Contact', href: `#${SECTION_IDS.contact}` })}
-          >
-            Book a consultation
-          </ButtonLink>
-        </div>
       </div>
     </div>
   );

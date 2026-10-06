@@ -1,14 +1,12 @@
 import { useRef, useState } from 'react';
-import { ArrowRight, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 import { primaryNav, type NavLink } from '@/content/navigation';
-import { SECTION_IDS } from '@/content/sections';
 import { useActiveSection } from '@/hooks/useActiveSection';
 import { useScrolled } from '@/hooks/useScrolled';
 import { cn } from '@/lib/utils';
 
 import { BrandMark } from '../shared/BrandMark';
-import { ButtonLink } from '../ui/Button';
 import { Container } from '../ui/Container';
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
@@ -53,16 +51,8 @@ export function SiteHeader({ onNavigate }: { onNavigate: (link: NavLink) => void
 
           <DesktopNav activeHref={activeId ? `#${activeId}` : null} onNavigate={onNavigate} />
 
-          <div className="flex items-center gap-2">
-            <ButtonLink
-              href={`#${SECTION_IDS.contact}`}
-              variant="primary"
-              size="sm"
-              icon={ArrowRight}
-              className="hidden sm:inline-flex"
-            >
-              Book a consultation
-            </ButtonLink>
+          {/* Only the menu button lives here, so on desktop the container is dropped and the nav sits at the right edge. */}
+          <div className="flex items-center gap-2 xl:hidden">
             <button
               ref={menuButtonRef}
               type="button"
