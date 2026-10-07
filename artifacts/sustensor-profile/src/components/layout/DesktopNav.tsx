@@ -139,8 +139,8 @@ function DropdownItem({ item, active, isOpen, onOpenChange, onFollow }: Dropdown
             )}
           >
             <a
-              href={item.sectionHref}
-              onClick={() => onFollow({ label: item.label, href: item.sectionHref })}
+              href={item.overviewHref ?? item.sectionHref}
+              onClick={() => onFollow({ label: item.label, href: item.overviewHref ?? item.sectionHref })}
               className={cn(
                 'flex items-center justify-between rounded-sm px-3 py-2 text-small font-semibold text-fg hover:bg-tint',
                 isColumns ? 'col-span-3 mb-1 border-b border-hairline pb-3' : 'mb-1',

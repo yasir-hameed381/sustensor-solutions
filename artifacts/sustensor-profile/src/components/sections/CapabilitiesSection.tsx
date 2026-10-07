@@ -1,12 +1,11 @@
-import type { CSSProperties } from 'react';
-import { Cloud, Cpu, Layers, ShoppingCart, type LucideIcon } from 'lucide-react';
+import { useState, type CSSProperties } from 'react';
+import { CircleCheck, Cloud, Cpu, Layers, ShoppingCart, type LucideIcon } from 'lucide-react';
 
 import { disciplines } from '@/content/disciplines';
 import { disciplineAnchorId, SECTION_IDS } from '@/content/sections';
 import type { Discipline } from '@/content/types';
 import { cn } from '@/lib/utils';
 
-import { Badge } from '../ui/Badge';
 import { SectionHeading } from '../ui/Heading';
 import { IconTile } from '../ui/IconTile';
 import { Section } from '../ui/Section';
@@ -37,8 +36,8 @@ export function CapabilitiesSection() {
 
       <ArchitectureDiagram />
 
-      {/* One row of three from lg; cards stretch to a shared height. */}
-      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+      {/* One row of three from lg. Each tile spans four shared rows (subgrid), so the capability lists start level across tiles. */}
+      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-0">
         {disciplines.map((discipline, index) => (
           <DisciplineTile key={discipline.id} discipline={discipline} index={index} />
         ))}
@@ -90,11 +89,17 @@ function ArchitectureDiagram() {
   );
 }
 
+// Solution copy longer than this is shortened (with "Read more") so the three tiles stay balanced.
+const LONG_SOLUTION = 320;
+
 function DisciplineTile({ discipline, index }: { discipline: Discipline; index: number }) {
+  const [expanded, setExpanded] = useState(false);
   const inverse = discipline.id === FEATURED_ID;
   const Icon = icons[discipline.id] ?? Layers;
   const label = inverse ? 'text-accent-300' : 'text-accent-700';
   const muted = inverse ? 'text-fg-inverse-muted' : 'text-fg-muted';
+  const long = discipline.solution.length > LONG_SOLUTION;
+  const solutionId = `${disciplineAnchorId(discipline.id)}-solution`;
 
   return (
     <ToneContext.Provider value={inverse ? 'inverse' : 'light'}>
@@ -104,7 +109,7 @@ function DisciplineTile({ discipline, index }: { discipline: Discipline; index: 
         data-reveal
         style={{ '--reveal-index': index % 3 } as CSSProperties}
         className={cn(
-          'flex h-full flex-col rounded-2xl border p-6 transition-shadow duration-(--duration-base) target:shadow-glow sm:p-8 lg:p-10',
+          'flex h-full flex-col rounded-2xl border p-6 transition-shadow duration-(--duration-base) target:shadow-glow sm:p-8 lg:row-span-4 lg:grid lg:grid-rows-subgrid lg:gap-y-0',
           inverse ? 'border-ink-800 bg-ink-900 text-fg-inverse' : 'border-hairline bg-surface shadow-xs',
         )}
       >
@@ -118,24 +123,40 @@ function DisciplineTile({ discipline, index }: { discipline: Discipline; index: 
           {discipline.title}
         </h3>
 
-        <dl className="mb-8 mt-6 grid gap-5">
+        <dl className="mt-6 grid gap-5">
           <div>
             <dt className={cn('text-eyebrow uppercase', label)}>The logic</dt>
             <dd className={cn('mt-2 text-body', muted)}>{discipline.logic}</dd>
           </div>
           <div>
             <dt className={cn('text-eyebrow uppercase', label)}>The solution</dt>
-            <dd className={cn('mt-2 text-body font-medium', inverse ? 'text-fg-inverse' : 'text-fg')}>{discipline.solution}</dd>
+            <dd className="mt-2">
+              <p id={solutionId} className={cn('text-body font-medium', inverse ? 'text-fg-inverse' : 'text-fg', long && !expanded && 'line-clamp-7')}>
+                {discipline.solution}
+              </p>
+              {long && (
+                <button
+                  type="button"
+                  aria-expanded={expanded}
+                  aria-controls={solutionId}
+                  onClick={() => setExpanded(!expanded)}
+                  className={cn('mt-2 text-small font-semibold hover:underline', inverse ? 'text-accent-300' : 'text-accent-700')}
+                >
+                  {expanded ? 'Show less' : 'Read more'}
+                </button>
+              )}
+            </dd>
           </div>
         </dl>
 
-        {/* mt-auto pins the capabilities to the bottom of the card. */}
-        <div className={cn('mt-auto border-t pt-6', inverse ? 'border-hairline-inverse' : 'border-hairline')}>
+        {/* Capabilities: the last subgrid row, so the lists start level across tiles; pinned to the bottom when tiles stack. */}
+        <div className={cn('mt-8 border-t pt-6 max-lg:mt-auto', inverse ? 'border-hairline-inverse' : 'border-hairline')}>
           <h4 className={cn('text-eyebrow uppercase', label)}>Capabilities</h4>
-          <ul className="mt-3 flex flex-wrap gap-2">
+          <ul className="mt-3 grid gap-2">
             {discipline.capabilities.map((capability) => (
-              <li key={capability}>
-                <Badge tone="neutral">{capability}</Badge>
+              <li key={capability} className={cn('flex items-start gap-2 text-caption font-medium', inverse ? 'text-fg-inverse-muted' : 'text-fg-muted')}>
+                <CircleCheck aria-hidden="true" className={cn('mt-px size-3.5 shrink-0', inverse ? 'text-accent-300' : 'text-accent-600')} />
+                {capability}
               </li>
             ))}
           </ul>

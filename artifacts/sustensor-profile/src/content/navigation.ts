@@ -22,6 +22,8 @@ export interface NavItem {
   label: string;
   /** The section this item represents. Items without `groups` link straight to it. */
   sectionHref: string;
+  /** Where the dropdown's "… overview" link goes, when not `sectionHref`. */
+  overviewHref?: string;
   /** When present, the item opens a dropdown instead of linking directly. */
   groups?: NavGroup[];
   /** `columns` renders groups side by side (mega menu); `list` stacks them. */
@@ -50,7 +52,14 @@ const capabilityGroups: NavGroup[] = disciplines
 
 export const primaryNav: NavItem[] = [
   { id: 'about', label: 'About', sectionHref: anchor(SECTION_IDS.about) },
-  { id: 'solutions', label: 'Solutions', sectionHref: anchor(SECTION_IDS.solutions), groups: [{ links: solutionLinks }] },
+  {
+    id: 'solutions',
+    label: 'Solutions',
+    sectionHref: anchor(SECTION_IDS.solutions),
+    // "Solutions overview" starts at the "In motion" heading, above the demo and the solution details.
+    overviewHref: anchor(SECTION_IDS.workflows),
+    groups: [{ links: solutionLinks }],
+  },
   {
     id: 'sector',
     label: 'Sectors',

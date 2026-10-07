@@ -37,17 +37,11 @@ export function AboutSection() {
         <p className="text-h3 font-medium text-fg lg:col-span-8 lg:pt-9">{about.intro}</p>
       </div>
 
-      {/* Principles: spotlight cards with a large watermark number. */}
+      {/* Principles: spotlight cards. */}
       <ul className="mt-14 grid gap-4 md:grid-cols-3 lg:mt-20 lg:gap-5">
         {about.principles.map((principle, index) => (
           <li key={principle.title} data-reveal style={{ '--reveal-index': index } as CSSProperties}>
             <Card interactive padding="lg" className="h-full overflow-hidden">
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-2 -top-6 -z-10 select-none text-watermark text-tint"
-              >
-                {String(index + 1).padStart(2, '0')}
-              </span>
               <IconTile icon={principleIcons[index]} size="lg" tone={index === 2 ? 'brand' : 'accent'} />
               <h3 className="mt-8 text-h4 text-fg">{principle.title}</h3>
               <p className="mt-2 text-body text-fg-muted">{principle.text}</p>
@@ -82,16 +76,20 @@ export function AboutSection() {
         </div>
       </ToneContext.Provider>
 
-      {/* The operating brief */}
-      <div data-reveal className="mt-4 grid gap-10 rounded-2xl border border-hairline bg-surface p-8 sm:p-10 lg:grid-cols-12 lg:gap-12 lg:p-12">
-        <figure className="lg:col-span-7">
+      {/* The operating brief. From lg: quote | divider | focus & lens, with the divider centred in the space between. */}
+      <div
+        data-reveal
+        className="mt-4 grid gap-10 rounded-2xl border border-hairline bg-surface p-8 sm:p-10 lg:grid-cols-[minmax(0,32rem)_minmax(6rem,1fr)_auto] lg:gap-0 lg:p-12"
+      >
+        <figure>
           <figcaption className="text-eyebrow uppercase text-accent-700">The operating brief</figcaption>
           <blockquote className="mt-5 border-l-2 border-accent-500 pl-6 text-h2 font-medium text-fg">
             {copy.hero.briefQuote}
           </blockquote>
         </figure>
+        <span aria-hidden="true" className="mx-auto hidden w-px self-stretch bg-hairline lg:block" />
         {/* Focus and lens side by side, row by row, so each focus lines up with its lens. */}
-        <div className="border-t border-hairline pt-8 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
+        <div className="border-t border-hairline pt-8 lg:border-t-0 lg:pt-0">
           <table className="w-full">
             <thead>
               <tr>

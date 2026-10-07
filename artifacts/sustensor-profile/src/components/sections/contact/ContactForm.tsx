@@ -135,12 +135,8 @@ export function ContactForm() {
       className="rounded-2xl border border-hairline bg-surface p-6 shadow-md sm:p-8 lg:p-10"
     >
       <h3 id={`${formId}-title`} className="text-h3 text-fg">
-        Book a consultation
+        Contact Us
       </h3>
-      <p className="mt-2 text-small text-fg-muted">
-        Fields marked <span aria-hidden="true">*</span>
-        <span className="sr-only">with an asterisk</span> are required.
-      </p>
 
       {status.state === 'error' && (
         <div role="alert" className="mt-6 flex gap-3 rounded-md border border-danger-600/30 bg-danger-50 p-4 text-small text-danger-600">

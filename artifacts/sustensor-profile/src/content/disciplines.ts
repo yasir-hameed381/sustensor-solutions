@@ -22,6 +22,7 @@ export const disciplines: Discipline[] = [
     id: 'saas-solutions',
     number: '02',
     title: 'SaaS Solutions',
+    menuGroup: 'SaaS Solutions',
     logic: 'Legacy software creates operational friction and slows down fast-scaling organisations.',
     solution:
       'Scalable, hyper-localised Vendor Management, Procurement and Contract governance SaaS applications designed for rapid deployment and ERP (Oracle/SAP) integration or Standalone functionality, built to comply with your Policy & DoA and regulatory requirements.',

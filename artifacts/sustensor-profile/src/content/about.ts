@@ -1,7 +1,7 @@
 export const about = {
   heading: 'Who We Are',
   intro:
-    'Sustensor Solutions is a Riyadh-based technology firm. We help organisations turn their digital ambitions into measurable operating results, combining practitioner experience with purpose-built software.',
+    'Sustensor Solutions is a technology firm that helps organisations turn their digital ambitions into measurable operating results, combining practitioner experience with purpose-built software.',
   mission: {
     title: 'Our Mission',
     text: 'To drive systemic change across the region by making sustainable, well-governed procurement the standard for commercial resilience.',

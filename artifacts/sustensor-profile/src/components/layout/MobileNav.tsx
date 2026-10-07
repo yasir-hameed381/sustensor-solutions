@@ -107,8 +107,8 @@ export function MobileNav({ onClose, onFollow }: MobileNavProps) {
                   {isExpanded && (
                     <div id={groupId} className="panel-in mb-2 ml-3 border-l border-hairline-inverse pl-2">
                       <a
-                        href={item.sectionHref}
-                        onClick={() => onFollow({ label: item.label, href: item.sectionHref })}
+                        href={item.overviewHref ?? item.sectionHref}
+                        onClick={() => onFollow({ label: item.label, href: item.overviewHref ?? item.sectionHref })}
                         className={cn(linkClass, 'font-semibold text-accent-300')}
                       >
                         {item.label} overview
