@@ -14,6 +14,8 @@ interface CountUpProps {
 export function CountUp({ value, suffix = '', duration = 1200 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const [display, setDisplay] = useState(value);
+  // Keep the value's own decimal places while counting (97.5 stays 97.5, not 98).
+  const decimals = (String(value).split('.')[1] ?? '').length;
 
   useEffect(() => {
     const element = ref.current;
@@ -29,7 +31,7 @@ export function CountUp({ value, suffix = '', duration = 1200 }: CountUpProps) {
         const tick = (now: number) => {
           const progress = Math.min(1, (now - start) / duration);
           const eased = 1 - Math.pow(1 - progress, 3);
-          setDisplay(Math.round(value * eased));
+          setDisplay(Number((value * eased).toFixed(decimals)));
           if (progress < 1) frame = requestAnimationFrame(tick);
         };
         frame = requestAnimationFrame(tick);
@@ -41,12 +43,12 @@ export function CountUp({ value, suffix = '', duration = 1200 }: CountUpProps) {
       observer.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [value, duration]);
+  }, [value, duration, decimals]);
 
   return (
     <span ref={ref}>
       <span aria-hidden="true">
-        {display}
+        {display.toFixed(decimals)}
         {suffix}
       </span>
       <span className="sr-only">

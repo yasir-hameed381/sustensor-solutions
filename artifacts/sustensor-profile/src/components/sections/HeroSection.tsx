@@ -77,7 +77,8 @@ export function HeroSection() {
           </dl>
         </div>
 
-        <div className="hero-enter lg:col-span-6 lg:pl-4" style={enter(3)}>
+        {/* From lg the dashboard is pinned near the heading rather than centred, so its height can change without it drifting. */}
+        <div className="hero-enter lg:col-span-6 lg:mt-18 lg:self-start lg:pl-4" style={enter(3)}>
           <div ref={tiltRef} className="tilt">
             <HeroDashboard className="mx-auto max-w-xl lg:max-w-none" />
           </div>
