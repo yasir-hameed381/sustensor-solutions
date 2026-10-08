@@ -25,7 +25,9 @@ const companyLinks: NavLink[] = [
   { label: 'Who we are', href: `#${SECTION_IDS.about}` },
   { label: 'The reality check', href: `#${SECTION_IDS.realityCheck}` },
   { label: 'Integrated architecture', href: `#${SECTION_IDS.capabilities}` },
+  { label: 'Built for every team', href: `#${SECTION_IDS.teams}` },
   { label: 'Regional vision', href: `#${SECTION_IDS.region}` },
+  { label: 'FAQs', href: `#${SECTION_IDS.faq}` },
 ];
 
 export function SiteFooter({ onNavigate }: { onNavigate: (link: NavLink) => void }) {
@@ -44,21 +46,21 @@ export function SiteFooter({ onNavigate }: { onNavigate: (link: NavLink) => void
         <div className="lg:col-span-4">
           <BrandMark />
           <p className="mt-5 max-w-xs text-small">{company.legalName}</p>
-          <ul className="mt-6 space-y-3 text-small">
+          <ul className="mt-5 space-y-0.5 text-small">
             <li>
-              <a href={company.emailUrl} className="inline-flex items-center gap-2.5 hover:text-fg-inverse">
+              <a href={company.emailUrl} className="inline-flex min-h-9 items-center gap-2.5 hover:text-fg-inverse">
                 <Mail aria-hidden="true" className="size-4 text-accent-300" />
                 {company.email}
               </a>
             </li>
             <li>
-              <a href={company.whatsappUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 hover:text-fg-inverse">
+              <a href={company.whatsappUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-9 items-center gap-2.5 hover:text-fg-inverse">
                 <MessageCircle aria-hidden="true" className="size-4 text-accent-300" />
                 {company.phone}
                 <span className="sr-only">(WhatsApp, opens in a new tab)</span>
               </a>
             </li>
-            <li className="inline-flex items-center gap-2.5">
+            <li className="inline-flex min-h-9 items-center gap-2.5">
               <MapPin aria-hidden="true" className="size-4 text-accent-300" />
               {company.locationLong}
             </li>
@@ -70,13 +72,13 @@ export function SiteFooter({ onNavigate }: { onNavigate: (link: NavLink) => void
             // Phones: Solutions and Company side by side, Sectors full width in two columns.
             <div key={column.title} className={column.title === 'Sectors' ? 'col-span-2 sm:col-span-1' : undefined}>
               <h2 className="text-eyebrow uppercase text-fg-inverse">{column.title}</h2>
-              <ul className={column.title === 'Sectors' ? 'mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5 sm:grid-cols-1' : 'mt-4 space-y-2.5'}>
+              <ul className={column.title === 'Sectors' ? 'mt-3 grid grid-cols-2 gap-x-6 sm:grid-cols-1' : 'mt-3'}>
                 {column.links.map((link) => (
                   <li key={link.label}>
                     <a
                       href={link.href}
                       onClick={() => onNavigate(link)}
-                      className="text-small transition-colors duration-(--duration-fast) hover:text-fg-inverse"
+                      className="inline-block py-1.5 text-small transition-colors duration-(--duration-fast) hover:text-fg-inverse"
                     >
                       {link.label}
                     </a>

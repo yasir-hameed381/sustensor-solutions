@@ -64,7 +64,9 @@ export function RegionSection() {
               style={{ '--reveal-index': index } as CSSProperties}
               className="spotlight spotlight-inverse group flex gap-5 rounded-xl border border-hairline-inverse bg-white/4 p-5 transition-colors duration-(--duration-base) hover:bg-white/6 sm:p-6"
             >
-              <IconTile icon={pillarIcons[index]} size="lg" />
+              <span className="icon-wiggle inline-flex" style={{ '--i': index } as CSSProperties}>
+                <IconTile icon={pillarIcons[index]} size="lg" />
+              </span>
               <div>
                 <h3 className="text-h4 text-fg-inverse">{pillar.title}</h3>
                 <p className="mt-2 text-body text-fg-inverse-muted">{pillar.text}</p>

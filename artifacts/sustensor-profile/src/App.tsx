@@ -5,12 +5,14 @@ import { SiteHeader } from '@/components/layout/SiteHeader';
 import { AboutSection } from '@/components/sections/AboutSection';
 import { CapabilitiesSection } from '@/components/sections/CapabilitiesSection';
 import { ContactSection } from '@/components/sections/ContactSection';
+import { FaqSection } from '@/components/sections/FaqSection';
 import { HeroSection } from '@/components/sections/HeroSection';
 import { PartnersSection } from '@/components/sections/PartnersSection';
 import { RealityCheckSection } from '@/components/sections/RealityCheckSection';
 import { RegionSection } from '@/components/sections/RegionSection';
 import { SectorsSection } from '@/components/sections/SectorsSection';
 import { SolutionsSection } from '@/components/sections/SolutionsSection';
+import { TeamsSection } from '@/components/sections/TeamsSection';
 import { WorkflowSection } from '@/components/sections/WorkflowSection';
 import type { WorkflowRequest } from '@/components/sections/workflow/Orchestrator';
 import { VerdictSection } from '@/components/sections/VerdictSection';
@@ -63,9 +65,11 @@ export default function App() {
         />
         <SectorsSection activeId={activeSectorId} onSelect={setActiveSectorId} />
         <CapabilitiesSection />
+        {/* <TeamsSection /> */}
         <RegionSection />
         <VerdictSection />
         <PartnersSection />
+        {/* <FaqSection /> */}
         <ContactSection />
       </main>
 

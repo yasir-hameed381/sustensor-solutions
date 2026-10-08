@@ -1,5 +1,6 @@
-import { useRef, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useRef, type KeyboardEvent, type ReactNode } from 'react';
 
+import { prefersReducedMotion } from '@/hooks/useInView';
 import { cn } from '@/lib/utils';
 
 export interface TabItem {
@@ -29,6 +30,18 @@ export function TabList({ label, items, activeId, onChange, idPrefix, className,
     0,
     items.findIndex((item) => item.id === activeId),
   );
+
+  // In a horizontally scrolling tab row (phones), keep the selected tab in view, e.g. when it is chosen from
+  // the header menu. Scrolls only the row itself, never the page.
+  useEffect(() => {
+    const tab = refs.current[focusedIndex];
+    const row = tab?.parentElement;
+    if (!tab || !row || row.scrollWidth <= row.clientWidth) return;
+    const left = tab.offsetLeft - row.offsetLeft;
+    if (left < row.scrollLeft || left + tab.offsetWidth > row.scrollLeft + row.clientWidth) {
+      row.scrollTo({ left: Math.max(0, left - 16), behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+    }
+  }, [focusedIndex]);
 
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     const last = items.length - 1;

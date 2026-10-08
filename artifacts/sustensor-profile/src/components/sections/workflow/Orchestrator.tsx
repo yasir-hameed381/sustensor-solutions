@@ -362,11 +362,29 @@ function Canvas({ solution, stages, stage, visible, panning, paused }: CanvasPro
               {/* Fan-out to deliverables */}
               <div className="flex flex-col items-center md:flex-row md:self-stretch">
                 <BranchLines lit={stage >= stages - 1} />
-                {/* Phones show two deliverables to keep the stacked graph short; the third appears from md. */}
-                <div className="flex w-full flex-col gap-3 md:w-auto [&>*:nth-child(3)]:hidden md:[&>*:nth-child(3)]:block">
-                  {deliverables.map((row) => (
-                    <FlowNode key={row.area} icon={FileCheck2} title={row.area} meta="Deliverable" state={nodeState(stages - 1, stage)} variant="deliverable" />
-                  ))}
+                {/*
+                  Phones: one grouped panel; a rail down the left branches into each deliverable, so the three read
+                  as outputs of the same step. From md the panel styling drops away and the curves above do the job.
+                */}
+                <div className="w-full rounded-xl border border-white/25 bg-white/8 p-3 md:w-auto md:rounded-none md:border-0 md:bg-transparent md:p-0">
+                  <p className="mb-2.5 text-micro font-semibold uppercase tracking-wide text-white/85 md:hidden">
+                    {deliverables.length} deliverables
+                  </p>
+                  <ul className="flex flex-col gap-3 max-md:pl-5">
+                    {deliverables.map((row, index) => {
+                      const line = cn('absolute bg-white transition-opacity duration-500 md:hidden', stage >= stages - 1 ? 'opacity-90' : 'opacity-40');
+                      const last = index === deliverables.length - 1;
+                      return (
+                        <li key={row.area} className="relative">
+                          {/* Rail piece: bridges the gap above (except the first card) and stops at the middle of the last card. */}
+                          <span aria-hidden="true" className={cn(line, '-left-3.5 w-px', index === 0 ? 'top-0' : '-top-3', last ? 'bottom-1/2' : 'bottom-0')} />
+                          {/* Branch from the rail into the card, at its vertical middle. */}
+                          <span aria-hidden="true" className={cn(line, '-left-3.5 top-1/2 h-px w-3.5')} />
+                          <FlowNode icon={FileCheck2} title={row.area} meta="Deliverable" state={nodeState(stages - 1, stage)} variant="deliverable" />
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
               </div>
             </div>
@@ -417,7 +435,7 @@ function FlowNode({
         <p className="min-w-0 text-caption font-semibold leading-snug text-fg">{title}</p>
       </div>
       <div className="mt-2.5 flex items-center justify-between gap-2">
-        <span className="truncate text-micro text-fg-subtle">{meta}</span>
+        <span className="min-w-0 text-micro text-fg-subtle md:truncate">{meta}</span>
         <span className={cn('inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-micro font-semibold', pill.className)}>
           <pill.icon aria-hidden="true" className={cn('size-2.5', state === 'active' && 'animate-spin')} />
           {pill.label}
@@ -430,21 +448,32 @@ function FlowNode({
 /** Parallel sub-steps under a node, linked by a short dashed drop. Brighten once the flow reaches the node. */
 function SubSteps({ items, lit }: { items: string[]; lit: boolean }) {
   return (
-    <div className="mt-2 flex flex-col items-center md:absolute md:inset-x-0 md:top-full">
-      <span aria-hidden="true" className="h-3 border-l border-dashed border-white/60" />
-      <ul className="flex w-full flex-col gap-1.5">
-        {items.map((item) => (
-          <li
-            key={item}
-            className={cn(
-              'flex items-center gap-1.5 rounded-md bg-surface/90 px-2.5 py-1.5 text-micro font-semibold text-fg shadow-xs transition-opacity duration-500',
-              lit ? 'opacity-100' : 'opacity-60',
-            )}
-          >
-            <CornerDownRight aria-hidden="true" className="size-3 shrink-0 text-accent-600" />
-            {item}
-          </li>
-        ))}
+    // Phones: indented under the card, hanging off a dashed rail from the card's bottom edge (like a tree), so they
+    // read as part of the step above rather than as steps of their own. From md: a short centred drop below the node.
+    <div className="mt-1 flex flex-col md:absolute md:inset-x-0 md:top-full md:mt-2 md:items-center">
+      <span aria-hidden="true" className="hidden h-3 border-l border-dashed border-white/60 md:block" />
+      <ul className="flex w-full flex-col gap-1.5 max-md:pl-8 max-md:pt-1.5">
+        {items.map((item, index) => {
+          const last = index === items.length - 1;
+          return (
+            <li
+              key={item}
+              className={cn(
+                'relative flex items-center gap-1.5 rounded-md bg-surface/90 px-2.5 py-1.5 text-micro font-semibold text-fg shadow-xs transition-opacity duration-500',
+                lit ? 'opacity-100' : 'opacity-60',
+              )}
+            >
+              {/* Rail piece (from the card's bottom edge for the first item) and branch into the chip. */}
+              <span
+                aria-hidden="true"
+                className={cn('absolute -left-4 border-l border-dashed border-white/70 md:hidden', index === 0 ? '-top-2.5' : '-top-1.5', last ? 'bottom-1/2' : 'bottom-0')}
+              />
+              <span aria-hidden="true" className="absolute -left-4 top-1/2 w-4 border-t border-dashed border-white/70 md:hidden" />
+              <CornerDownRight aria-hidden="true" className="size-3 shrink-0 text-accent-600" />
+              {item}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -463,7 +492,7 @@ function Arrow({ lit }: { lit: boolean }) {
   );
 }
 
-/** Phones: a plain arrow. From md: one line in, three curves out to the stacked deliverables. */
+/** Phones: an arrow into the deliverables panel (its rail does the branching). From md: one line in, three curves out. */
 function BranchLines({ lit }: { lit: boolean }) {
   const opacity = lit ? 0.95 : 0.4;
   return (

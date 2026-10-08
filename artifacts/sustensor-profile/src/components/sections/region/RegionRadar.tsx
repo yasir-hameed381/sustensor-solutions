@@ -47,7 +47,7 @@ export function RegionRadar() {
               stroke="var(--color-ink-900)"
               strokeWidth="4"
               paintOrder="stroke"
-              fontSize="11"
+              fontSize="13"
               fontWeight="600"
               letterSpacing="0.6"
             >
@@ -73,7 +73,7 @@ export function RegionRadar() {
         <circle cx={CX} cy={CY} r="28" fill="url(#core)" />
         <circle cx={CX} cy={CY} r="7" fill="var(--color-brand-300)" className="animate-radar-ping" />
         <circle cx={CX} cy={CY} r="5" fill="var(--color-brand-300)" stroke="var(--color-ink-950)" strokeWidth="2" />
-        <text x={CX + 12} y={CY + 22} fill="var(--color-fg-inverse)" fontSize="12" fontWeight="600">
+        <text x={CX + 12} y={CY + 22} fill="var(--color-fg-inverse)" fontSize="14" fontWeight="600">
           {hq}
         </text>
       </svg>

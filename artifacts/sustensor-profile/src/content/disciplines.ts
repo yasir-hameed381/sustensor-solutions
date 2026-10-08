@@ -55,3 +55,28 @@ export const disciplines: Discipline[] = [
     ],
   },
 ];
+
+/**
+ * How the disciplines connect, shown in the Capabilities architecture diagram (one link per pair, in a cycle).
+ * Wording is drawn from the discipline copy above. TODO (DRAFT): confirm with the client.
+ */
+export const disciplineLinks: { from: string; verb: string; to: string; text: string }[] = [
+  {
+    from: 'procurement',
+    verb: 'configures',
+    to: 'saas-solutions',
+    text: 'Procurement policy, DoA limits and CIPS processes are built into the SaaS workflows, so every request follows the rules by default.',
+  },
+  {
+    from: 'saas-solutions',
+    verb: 'runs on',
+    to: 'technology',
+    text: 'The SaaS applications run on the cloud and ERP backbone, sharing one data layer with Oracle and SAP.',
+  },
+  {
+    from: 'technology',
+    verb: 'informs',
+    to: 'procurement',
+    text: 'Dashboards and AI analytics feed spend, risk and ESG insight back into sourcing and supplier decisions.',
+  },
+];

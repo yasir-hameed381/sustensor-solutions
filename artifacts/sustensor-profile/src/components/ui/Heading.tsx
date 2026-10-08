@@ -72,7 +72,16 @@ export function SectionHeading({ id, eyebrow, title, lead, align = 'start', asid
   }
   return (
     <div data-reveal className={cn('max-w-3xl', centered && 'mx-auto text-center', className)}>
-      <Eyebrow>{eyebrow}</Eyebrow>
+      {centered ? (
+        // Centred headings get a thin line either side of the label (liztek section labels).
+        <div className="flex items-center justify-center gap-3">
+          <span aria-hidden="true" className={cn('h-px w-10 bg-linear-to-l to-transparent sm:w-16', inverse ? 'from-accent-300/60' : 'from-accent-500/60')} />
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <span aria-hidden="true" className={cn('h-px w-10 bg-linear-to-r to-transparent sm:w-16', inverse ? 'from-accent-300/60' : 'from-accent-500/60')} />
+        </div>
+      ) : (
+        <Eyebrow>{eyebrow}</Eyebrow>
+      )}
       <Heading id={id} className="mt-4">
         {title}
       </Heading>

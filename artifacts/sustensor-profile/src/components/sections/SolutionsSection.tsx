@@ -29,7 +29,7 @@ import { SolutionFlow } from './solutions/SolutionFlow';
 const ID_PREFIX = 'solution';
 
 // Tab icons. Sustainability-led solutions use the brand green.
-const tabIcons: Record<string, { icon: LucideIcon; tone: 'accent' | 'brand' }> = {
+export const solutionIcons: Record<string, { icon: LucideIcon; tone: 'accent' | 'brand' }> = {
   'vendor-management': { icon: Handshake, tone: 'accent' },
   'contract-sustainability': { icon: FileCheck2, tone: 'brand' },
   'procure-to-pay': { icon: Receipt, tone: 'accent' },
@@ -82,9 +82,17 @@ export function SolutionsSection({ activeId, showAll, onSelect, onShowAllChange 
         }
       />
 
+      {/* Short wording on phones keeps the label and the button on one line. */}
       <div className="mt-12 flex items-center justify-between gap-4 lg:mt-16">
-        <p className="text-small text-fg-subtle">
-          {showAll ? `Showing all ${solutions.length} solutions` : 'Select a solution'}
+        <p className="min-w-0 truncate text-small text-fg-subtle">
+          {showAll ? (
+            <>
+              <span className="sm:hidden">All {solutions.length} solutions</span>
+              <span className="max-sm:hidden">Showing all {solutions.length} solutions</span>
+            </>
+          ) : (
+            'Select a solution'
+          )}
         </p>
         <Button
           variant="ghost"
@@ -94,7 +102,14 @@ export function SolutionsSection({ activeId, showAll, onSelect, onShowAllChange 
           aria-pressed={showAll}
           onClick={() => onShowAllChange(!showAll)}
         >
-          {showAll ? 'Show one at a time' : `Show all ${solutions.length}`}
+          {showAll ? (
+            <>
+              <span className="sm:hidden">One at a time</span>
+              <span className="max-sm:hidden">Show one at a time</span>
+            </>
+          ) : (
+            `Show all ${solutions.length}`
+          )}
         </Button>
       </div>
 
@@ -126,8 +141,8 @@ export function SolutionsSection({ activeId, showAll, onSelect, onShowAllChange 
               />
               <span className="flex w-full items-center justify-between">
                 <IconTile
-                  icon={tabIcons[solution.id]?.icon ?? Handshake}
-                  tone={tabIcons[solution.id]?.tone}
+                  icon={solutionIcons[solution.id]?.icon ?? Handshake}
+                  tone={solutionIcons[solution.id]?.tone}
                   size="sm"
                   emphasis={isActive ? 'solid' : 'soft'}
                 />

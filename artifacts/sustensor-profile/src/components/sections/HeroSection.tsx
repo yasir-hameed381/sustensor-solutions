@@ -1,28 +1,17 @@
 import type { CSSProperties } from 'react';
-import { Boxes, Building2, CheckCircle2, Flag, Network, type LucideIcon } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
 import { copy } from '@/content/copy';
-import { disciplines } from '@/content/disciplines';
 import { frameworks } from '@/content/frameworks';
 import { useTilt } from '@/hooks/useTilt';
 import { cn } from '@/lib/utils';
 import { SECTION_IDS } from '@/content/sections';
-import { sectors } from '@/content/sectors';
-import { solutions } from '@/content/solutions';
 
 import { ButtonLink } from '../ui/Button';
-import { CountUp } from '../ui/CountUp';
 import { Container } from '../ui/Container';
 import { Accent } from '../ui/Heading';
 import { HeroDashboard } from './hero/HeroDashboard';
-
-// Every figure is a count of what the site itself presents.
-const stats: { value: number | string; label: string; icon: LucideIcon }[] = [
-  { value: solutions.length, label: 'Enterprise solutions', icon: Boxes },
-  { value: sectors.length, label: 'Sectors served', icon: Building2 },
-  { value: disciplines.length, label: 'Integrated disciplines', icon: Network },
-  { value: '2030', label: 'Calibrated for Saudi Vision', icon: Flag },
-];
+import { StatStrip } from './hero/StatStrip';
 
 const enter = (index: number) => ({ '--reveal-index': index }) as CSSProperties;
 
@@ -41,8 +30,10 @@ export function HeroSection() {
         <div className="lg:col-span-6">
           <h1 id="hero-heading" className="hero-enter text-display text-fg" style={enter(1)}>
             Make the case for a better,{' '}
-            <em className="italic">
+            {/* A soft highlight sweeps in under the key word after the headline enters (compliverse). */}
+            <em className="relative isolate inline-block italic">
               <Accent>sustainable</Accent>
+              <span aria-hidden="true" className="highlight-sweep absolute inset-x-0 bottom-[0.12em] -z-10 h-[0.22em] rounded-full bg-accent-100" />
             </em>{' '}
             future.
           </h1>
@@ -88,31 +79,7 @@ export function HeroSection() {
       {/* Stat strip */}
       <div className="border-t border-hairline bg-surface">
         <Container>
-          <dl className="grid grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat, index) => (
-              <div
-                key={stat.label}
-                className={
-                  'flex flex-col gap-1 border-hairline py-6 sm:py-8 ' +
-                  // Two columns on phones/tablets, four from lg; hairlines between cells.
-                  [
-                    'pr-4 sm:pr-8 lg:pr-8',
-                    'border-l pl-5 sm:pl-8',
-                    'border-t pr-4 sm:pr-8 lg:border-l lg:border-t-0 lg:pl-8',
-                    'border-l border-t pl-5 sm:pl-8 lg:border-t-0',
-                  ][index]
-                }
-              >
-                <dt className="flex items-center gap-2 text-small text-fg-muted">
-                  <stat.icon aria-hidden="true" className="size-4 shrink-0 text-brand-600" strokeWidth={1.75} />
-                  {stat.label}
-                </dt>
-                <dd className="order-first text-h2 tabular-nums text-fg">
-                  {typeof stat.value === 'number' ? <CountUp value={stat.value} duration={900} /> : stat.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
+          <StatStrip />
 
           {/* Trust layer: frameworks and standards, as text badges (no logos). */}
           <div className="flex flex-col gap-4 border-t border-hairline py-6 lg:flex-row lg:items-center lg:gap-8">

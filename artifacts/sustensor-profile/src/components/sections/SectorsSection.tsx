@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { ArrowUpRight, CircleCheck } from 'lucide-react';
 
 import { SECTION_IDS, sectorAnchorId } from '@/content/sections';
@@ -117,10 +117,12 @@ function SectorDetail({ sector }: { sector: Sector }) {
 
         <p className="mt-8 text-eyebrow uppercase text-fg-inverse">Where we focus</p>
         <ul className="mt-4 grid gap-3 sm:grid-cols-3">
-          {sector.focus.map((item) => (
+          {/* stage-pop replays each time this tab is opened (compliverse). */}
+          {sector.focus.map((item, index) => (
             <li
               key={item}
-              className="flex items-start gap-2.5 rounded-xl border border-hairline-inverse bg-white/4 p-4 text-small font-medium text-fg-inverse"
+              style={{ '--i': index } as CSSProperties}
+              className="stage-pop flex items-start gap-2.5 rounded-xl border border-hairline-inverse bg-white/4 p-4 text-small font-medium text-fg-inverse"
             >
               <CircleCheck aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent-300" />
               {item}
@@ -148,7 +150,7 @@ function PartnerProjects({ sectorName, projects }: { sectorName: string; project
             href={technovez.projectsUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 text-caption font-semibold text-accent-300 hover:text-accent-400 hover:underline"
+            className="-my-2 inline-flex items-center gap-1 py-2 text-caption font-semibold text-accent-300 hover:text-accent-400 hover:underline"
           >
             View all
             <ArrowUpRight aria-hidden="true" className="size-3.5" />
@@ -161,8 +163,8 @@ function PartnerProjects({ sectorName, projects }: { sectorName: string; project
           aria-label={`${technovez.name} projects in ${sectorName}`}
           className="-mx-6 mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0"
         >
-          {projects.map((project) => (
-            <li key={project.name} className="w-[78%] shrink-0 snap-start scroll-ml-6 sm:w-auto">
+          {projects.map((project, index) => (
+            <li key={project.name} style={{ '--i': index + 3 } as CSSProperties} className="stage-pop w-[78%] shrink-0 snap-start scroll-ml-6 sm:w-auto">
               <a
                 href={technovez.projectsUrl}
                 target="_blank"

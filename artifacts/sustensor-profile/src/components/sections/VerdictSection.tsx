@@ -1,6 +1,10 @@
 import { Check } from 'lucide-react';
 
+import type { CSSProperties } from 'react';
+
 import { copy } from '@/content/copy';
+import { useSeenOnce } from '@/hooks/useInView';
+import { cn } from '@/lib/utils';
 import { SECTION_IDS } from '@/content/sections';
 
 import { Container } from '../ui/Container';
@@ -8,6 +12,7 @@ import { ToneContext } from '../ui/tone';
 
 export function VerdictSection() {
   const { verdict } = copy;
+  const [ref, seen] = useSeenOnce<HTMLUListElement>();
 
   return (
     <ToneContext.Provider value="inverse">
@@ -35,14 +40,20 @@ export function VerdictSection() {
                 <p className="mt-6 max-w-2xl text-lead text-fg-inverse-muted">{verdict.body}</p>
               </div>
 
-              <ul className="space-y-4 lg:col-span-5">
-                {verdict.points.map((point) => (
+              {/* Checks tick in one by one when the card comes into view (compliverse cv-tick). */}
+              <ul ref={ref} className={cn('space-y-4 lg:col-span-5', seen && 'is-seen')}>
+                {verdict.points.map((point, index) => (
                   // One line per check from sm, as the slide asks.
                   <li key={point} className="flex items-center gap-3 text-h4 text-fg-inverse sm:whitespace-nowrap">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-brand-300 text-ink-950">
+                    <span
+                      style={{ '--i': index * 3 } as CSSProperties}
+                      className="stat-pop flex size-6 shrink-0 items-center justify-center rounded-full bg-brand-300 text-ink-950"
+                    >
                       <Check aria-hidden="true" className="size-3.5" strokeWidth={3} />
                     </span>
-                    {point}
+                    <span style={{ '--i': index * 3 + 1 } as CSSProperties} className="stat-slide">
+                      {point}
+                    </span>
                   </li>
                 ))}
               </ul>

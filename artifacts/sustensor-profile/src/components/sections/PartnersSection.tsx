@@ -20,6 +20,9 @@ export function PartnersSection() {
           <div className="bg-grid-inverse absolute inset-0 opacity-40 mask-fade-radial-l" />
           <div className="absolute -right-32 -top-24 size-128 rounded-full bg-accent-500/15 blur-3xl" />
           <div className="absolute -bottom-40 left-1/4 size-96 rounded-full bg-brand-500/10 blur-3xl" />
+          {/* Glowing perspective grid floor (liztek). */}
+          <div className="grid-floor absolute inset-x-0 bottom-0 h-72 opacity-70" />
+          <div className="absolute bottom-0 left-1/2 h-40 w-2/3 -translate-x-1/2 rounded-full bg-accent-500/20 blur-3xl" />
         </div>
       }
     >
@@ -53,7 +56,7 @@ function BackerCard({ backer, number }: { backer: Backer; number: number }) {
         <span className="font-semibold tabular-nums text-accent-300">{String(number).padStart(2, '0')}</span>
         {backer.label}
       </p>
-      <div className="flex flex-1 items-center justify-center py-10">
+      <div className="flex flex-1 items-center justify-center py-6 sm:py-10">
         {backer.logo ? (
           <img src={backer.logo} alt={backer.name} width={455} height={140} className="h-10 w-auto sm:h-11" />
         ) : (
@@ -76,7 +79,7 @@ function BackerCard({ backer, number }: { backer: Backer; number: number }) {
   );
 
   const className =
-    'spotlight spotlight-inverse group flex h-full min-h-64 flex-col rounded-2xl border border-hairline-inverse bg-white/4 p-6 transition-colors duration-(--duration-base) sm:p-7';
+    'spotlight spotlight-inverse group flex h-full min-h-44 flex-col sm:min-h-64 rounded-2xl border border-hairline-inverse bg-white/4 p-6 transition-colors duration-(--duration-base) sm:p-7';
   return backer.url ? (
     <a href={backer.url} target="_blank" rel="noreferrer" className={`${className} hover:border-hairline-inverse-strong hover:bg-white/6`}>
       {content}

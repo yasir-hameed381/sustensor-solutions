@@ -24,6 +24,10 @@ export function SolutionFlow({ steps, outputs }: SolutionFlowProps) {
           aria-hidden="true"
           className="anim-on-reveal animate-draw-line absolute bottom-6 left-5 top-6 w-px bg-linear-to-b from-accent-500 via-accent-400 to-hairline-strong lg:bottom-auto lg:left-6 lg:right-6 lg:top-5 lg:h-px lg:w-auto lg:bg-linear-to-r"
         />
+        {/* A data pulse travelling along the connector, start to finish, on a loop (compliverse). */}
+        <span aria-hidden="true" className="absolute bottom-6 left-5 top-6 w-px lg:bottom-auto lg:left-6 lg:right-6 lg:top-5 lg:h-px lg:w-auto">
+          <span className="anim-on-reveal animate-packet size-2 rounded-full bg-accent-500 shadow-[0_0_0_4px] shadow-accent-500/20" />
+        </span>
         {steps.map((step, index) => {
           const { icon: Icon, accent: Accent } = step;
           return (

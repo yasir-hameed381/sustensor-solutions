@@ -42,7 +42,9 @@ export function AboutSection() {
         {about.principles.map((principle, index) => (
           <li key={principle.title} data-reveal style={{ '--reveal-index': index } as CSSProperties}>
             <Card interactive padding="lg" className="h-full overflow-hidden">
-              <IconTile icon={principleIcons[index]} size="lg" tone={index === 2 ? 'brand' : 'accent'} />
+              <span className="icon-wiggle inline-flex" style={{ '--i': index } as CSSProperties}>
+                <IconTile icon={principleIcons[index]} size="lg" tone={index === 2 ? 'brand' : 'accent'} />
+              </span>
               <h3 className="mt-8 text-h4 text-fg">{principle.title}</h3>
               <p className="mt-2 text-body text-fg-muted">{principle.text}</p>
             </Card>

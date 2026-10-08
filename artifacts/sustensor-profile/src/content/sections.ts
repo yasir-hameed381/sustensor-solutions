@@ -8,9 +8,11 @@ export const SECTION_IDS = {
   solutions: 'solutions',
   sectors: 'sectors',
   capabilities: 'capabilities',
+  teams: 'teams',
   region: 'regional-lens',
   verdict: 'verdict',
   partners: 'partners',
+  faq: 'faq',
   contact: 'contact',
 } as const;
 
