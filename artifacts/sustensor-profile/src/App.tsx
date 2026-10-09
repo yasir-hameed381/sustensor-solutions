@@ -19,6 +19,7 @@ import { VerdictSection } from '@/components/sections/VerdictSection';
 import type { NavLink } from '@/content/navigation';
 import { sectors } from '@/content/sectors';
 import { solutions } from '@/content/solutions';
+import { useOffscreenPause } from '@/hooks/useOffscreenPause';
 import { useRevealOnScroll } from '@/hooks/useRevealOnScroll';
 import { useSpotlight } from '@/hooks/useSpotlight';
 
@@ -30,6 +31,7 @@ export default function App() {
 
   useRevealOnScroll();
   useSpotlight();
+  useOffscreenPause();
 
   const selectSolution = useCallback((id: string) => {
     setShowAllSolutions(false);

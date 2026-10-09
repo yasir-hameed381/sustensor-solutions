@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { ArrowRight, CheckCircle2, CircleDashed, CornerDownRight, FileCheck2, Pause, Play, PlugZap, type LucideIcon } from 'lucide-react';
 
 import { solutions } from '@/content/solutions';
@@ -21,8 +21,9 @@ const ERP_CHIPS = ['SAP S/4HANA', 'Oracle Cloud ERP', 'Microsoft Dynamics 365'];
 
 const INTRO_MS = 1300; // greeting centred before it slides up
 const ENTER_MS = 700; // canvas fade-in before the first node runs
-const STAGE_MS = 1000; // time per stage of the graph
-const HOLD_MS = 2200; // pause on the finished graph
+const STAGE_MS = 200; // time per stage: the line draws in, the card appears, then it runs
+const LINE_MS = 250; // a card appears this long after its incoming line starts drawing
+const HOLD_MS = 2600; // pause on the finished graph
 const LEAVE_MS = 450; // dim before switching workflow
 
 // Stages per workflow: each process step, then the deliverables together (the fan-out).
@@ -154,8 +155,6 @@ export function Orchestrator({ request }: { request?: WorkflowRequest }) {
         stages={stages}
         stage={stage}
         visible={introDone && phase !== 'leave'}
-        panning={phase === 'run' || phase === 'hold'}
-        paused={paused}
       />
     </div>
   );
@@ -263,49 +262,54 @@ interface CanvasProps {
   stages: number;
   stage: number;
   visible: boolean;
-  panning: boolean;
-  paused: boolean;
 }
 
-function Canvas({ solution, stages, stage, visible, panning, paused }: CanvasProps) {
-  const frameRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [pan, setPan] = useState(0);
-  // Pan offset captured at the moment of pausing (null while running).
-  const [frozenX, setFrozenX] = useState<number | null>(null);
-  const [resumeFraction, setResumeFraction] = useState(1);
+/**
+ * Build-up reveal (idea from compliverse.ai's workflow panel): a card stays hidden until the line drawing into it
+ * arrives, then fades and scales in. Hidden cards keep their space, so nothing shifts as the diagram builds.
+ */
+function reveal(shown: boolean, delay = LINE_MS) {
+  return {
+    className: cn(
+      'transition-[opacity,transform] duration-300 ease-out-soft motion-reduce:transition-none',
+      shown ? 'translate-y-0 scale-100 opacity-100' : 'pointer-events-none translate-y-2 scale-95 opacity-0',
+    ),
+    style: { transitionDelay: shown ? `${delay}ms` : '0ms' } as CSSProperties,
+  };
+}
 
-  useLayoutEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    if (paused) {
-      setFrozenX(new DOMMatrixReadOnly(getComputedStyle(track).transform).m41);
-    } else if (frozenX !== null) {
-      // Resume over the remaining share of the pan instead of restarting it.
-      if (pan > 0) setResumeFraction(Math.max(0.1, 1 - Math.abs(frozenX) / pan));
-      setFrozenX(null);
-    }
-  }, [paused, pan, frozenX]);
+/** Node card width (md:w-48) and the arrow between cards (w-10), in px. */
+const NODE_W = 192;
+const ARROW_W = 40;
+const CELL_W = NODE_W + ARROW_W;
 
-  // A fresh workflow pans over the full duration again.
-  useEffect(() => setResumeFraction(1), [solution.id]);
+function Canvas({ solution, stages, stage, visible }: CanvasProps) {
+  const graphRef = useRef<HTMLDivElement>(null);
+  // How many steps fit side by side in the frame (from md). Steps wrap onto further rows instead of panning.
+  const [cols, setCols] = useState(3);
 
-  // How far the graph must slide for its right end to come into view (0 when it fits or on phones).
   useLayoutEffect(() => {
     const measure = () => {
-      const frame = frameRef.current;
-      const track = trackRef.current;
-      if (frame && track) setPan(Math.max(0, track.scrollWidth - (frame.clientWidth - 40)));
+      const width = graphRef.current?.clientWidth ?? 0;
+      if (width) setCols(Math.max(2, Math.min(4, Math.floor((width + ARROW_W) / CELL_W))));
     };
     measure();
     const observer = new ResizeObserver(measure);
-    if (frameRef.current) observer.observe(frameRef.current);
+    if (graphRef.current) observer.observe(graphRef.current);
     return () => observer.disconnect();
-  }, [solution.id]);
+  }, []);
 
   const completed = stage < 0 ? 0 : Math.min(stages, stage);
   const deliverables = solution.deliverables.slice(0, 3);
-  const panDuration = (stages * STAGE_MS + HOLD_MS) / 1000;
+  const lastStep = solution.process.length - 1;
+
+  // Snake layout: row 1 runs left to right, row 2 right to left, and so on, joined by a short drop at the row end,
+  // so the whole workflow fits the frame and runs in one go. Deliverables sit in a row underneath.
+  const rows: { step: Solution['process'][number]; index: number }[][] = [];
+  solution.process.forEach((step, index) => {
+    if (index % cols === 0) rows.push([]);
+    rows[rows.length - 1].push({ step, index });
+  });
 
   return (
     <div className="relative isolate overflow-hidden bg-linear-to-br from-accent-600 via-brand-600 to-ink-700 p-4 sm:p-6 lg:col-span-8 lg:p-8">
@@ -321,7 +325,9 @@ function Canvas({ solution, stages, stage, visible, panning, paused }: CanvasPro
           </p>
         </div>
 
-        <div ref={frameRef} className="relative flex-1 overflow-hidden rounded-xl bg-white/10 p-4 backdrop-blur-sm sm:p-5">
+        <div className="relative isolate flex-1 overflow-hidden rounded-xl bg-white/10 p-4 backdrop-blur-sm sm:p-5">
+          {/* Grid canvas behind the diagram. */}
+          <div aria-hidden="true" className="bg-grid-inverse absolute inset-0 -z-10 opacity-60" />
           {/* ERP connector chips */}
           <ul className="flex flex-wrap gap-2" aria-label="Connected systems">
             {ERP_CHIPS.map((chip) => (
@@ -333,64 +339,137 @@ function Canvas({ solution, stages, stage, visible, panning, paused }: CanvasPro
             ))}
           </ul>
 
-          {/* Graph. Phones: vertical list. From md: a horizontal branching graph that pans. */}
-          <div className="mt-5 md:mt-8">
-            <div
-              ref={trackRef}
-              className="md:flex md:w-max md:items-center"
-              style={
-                frozenX !== null
-                  ? { transform: `translateX(${frozenX}px)`, transition: 'none' }
-                  : {
-                      transform: panning && pan > 0 ? `translateX(-${pan}px)` : 'translateX(0)',
-                      transition: panning
-                        ? `transform ${panDuration * resumeFraction}s cubic-bezier(0.45, 0, 0.55, 1)`
-                        : 'transform 0.4s ease',
-                    }
-              }
-            >
-              {solution.process.map((step, index) => (
-                <div key={step.title} className="flex flex-col items-center md:flex-row">
-                  {/* Sub-steps hang below their node; absolute from md so the row of nodes stays aligned. */}
-                  <div className="relative w-full md:w-auto">
-                    <FlowNode icon={step.icon} title={step.title} meta={step.detail} state={nodeState(index, stage)} />
-                    {step.branches && <SubSteps items={step.branches} lit={stage >= index} />}
-                  </div>
-                  <Arrow lit={stage > index} />
+          {/* Phones: a vertical list. */}
+          <div className="mt-5 md:hidden">
+            {solution.process.map((step, index) => (
+              <div
+                key={step.title}
+                style={reveal(index === 0 || stage >= index, index === 0 ? 0 : LINE_MS).style}
+                className={cn('flex flex-col items-center', reveal(index === 0 || stage >= index).className)}
+              >
+                <div className="w-full">
+                  <FlowNode icon={step.icon} title={step.title} meta={step.detail} state={nodeState(index, stage)} />
+                  {step.branches && <SubSteps items={step.branches} lit={stage >= index} />}
                 </div>
-              ))}
-              {/* Fan-out to deliverables */}
-              <div className="flex flex-col items-center md:flex-row md:self-stretch">
-                <BranchLines lit={stage >= stages - 1} />
-                {/*
-                  Phones: one grouped panel; a rail down the left branches into each deliverable, so the three read
-                  as outputs of the same step. From md the panel styling drops away and the curves above do the job.
-                */}
-                <div className="w-full rounded-xl border border-white/25 bg-white/8 p-3 md:w-auto md:rounded-none md:border-0 md:bg-transparent md:p-0">
-                  <p className="mb-2.5 text-micro font-semibold uppercase tracking-wide text-white/85 md:hidden">
-                    {deliverables.length} deliverables
-                  </p>
-                  <ul className="flex flex-col gap-3 max-md:pl-5">
-                    {deliverables.map((row, index) => {
-                      const line = cn('absolute bg-white transition-opacity duration-500 md:hidden', stage >= stages - 1 ? 'opacity-90' : 'opacity-40');
-                      const last = index === deliverables.length - 1;
+                <Arrow lit={stage > index} flowing={stage === index + 1} />
+              </div>
+            ))}
+            <Deliverables deliverables={deliverables} state={nodeState(stages - 1, stage)} lit={stage >= stages - 1} columns={1} />
+          </div>
+
+          {/* From md: the snake layout, sized to fit the frame. */}
+          <div ref={graphRef} className="mt-8 hidden md:block">
+            <div className="mx-auto" style={{ width: cols * CELL_W - ARROW_W }}>
+              {rows.map((row, rowIndex) => {
+                const reverse = rowIndex % 2 === 1;
+                return (
+                  <div key={rowIndex} className={cn('flex items-stretch pb-6', reverse && 'flex-row-reverse')}>
+                    {row.map(({ step, index }, position) => {
+                      const rowEnd = position === row.length - 1;
                       return (
-                        <li key={row.area} className="relative">
-                          {/* Rail piece: bridges the gap above (except the first card) and stops at the middle of the last card. */}
-                          <span aria-hidden="true" className={cn(line, '-left-3.5 w-px', index === 0 ? 'top-0' : '-top-3', last ? 'bottom-1/2' : 'bottom-0')} />
-                          {/* Branch from the rail into the card, at its vertical middle. */}
-                          <span aria-hidden="true" className={cn(line, '-left-3.5 top-1/2 h-px w-3.5')} />
-                          <FlowNode icon={FileCheck2} title={row.area} meta="Deliverable" state={nodeState(stages - 1, stage)} variant="deliverable" />
-                        </li>
+                        <div
+                          key={step.title}
+                          style={reveal(index === 0 || stage >= index, index === 0 ? 0 : LINE_MS).style}
+                          className={cn('flex items-stretch', reverse && 'flex-row-reverse', reveal(index === 0 || stage >= index).className)}
+                        >
+                          <div className="flex w-48 shrink-0 flex-col">
+                            <FlowNode icon={step.icon} title={step.title} meta={step.detail} state={nodeState(index, stage)} />
+                            {step.branches && <SubSteps items={step.branches} lit={stage >= index} />}
+                            {/* Row end: drop to the next row, or to the deliverables after the last step. */}
+                            {rowEnd && <DropLine lit={stage > index || (index === lastStep && stage >= stages - 1)} flowing={stage === index + 1} />}
+                          </div>
+                          {!rowEnd && <SideArrow lit={stage > index} reverse={reverse} flowing={stage === index + 1} />}
+                        </div>
                       );
                     })}
-                  </ul>
-                </div>
-              </div>
+                  </div>
+                );
+              })}
+              <Deliverables deliverables={deliverables} state={nodeState(stages - 1, stage)} lit={stage >= stages - 1} columns={Math.min(3, cols)} />
             </div>
           </div>
+          <BuiltIn items={BUILT_IN[solution.id] ?? []} done={stage >= stages} />
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Features built into each workflow, shown as chips once it completes. Drawn from the solutions copy. */
+const BUILT_IN: Record<string, string[]> = {
+  'vendor-management': ['KYC checks', 'Risk scoring', 'LCGPA tracking', 'Full audit trail'],
+  'procure-to-pay': ['DoA routing', '3-way match', 'ERP sync', 'Full audit trail'],
+  'contract-sustainability': ['ESG clauses', 'Live dashboards', 'Early warnings', 'Full audit trail'],
+  'annual-procurement-planning': ['Budget aligned', 'Risk assessed', 'DoA sign-off', 'Full audit trail'],
+};
+
+/** Chips with checks that cascade in when the workflow completes; space is reserved so nothing jumps. */
+function BuiltIn({ items, done }: { items: string[]; done: boolean }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/15 pt-4">
+      <span className="mr-1 text-micro font-semibold uppercase tracking-wide text-white/75">Built in</span>
+      {items.map((item, index) => (
+        <span
+          key={item}
+          style={{ animationDelay: `${index * 90}ms` }}
+          className={cn(
+            'inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-micro font-semibold text-white transition-opacity duration-300',
+            done ? 'pill-pop' : 'opacity-0',
+          )}
+        >
+          <CheckCircle2 aria-hidden="true" className={cn('size-3 transition-colors duration-300', done ? 'text-sand-300' : 'text-white/60')} />
+          {item}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/** The workflow's outputs, grouped in one panel (on phones a rail branches into each). */
+function Deliverables({
+  deliverables,
+  state,
+  lit,
+  columns,
+}: {
+  deliverables: Solution['deliverables'];
+  state: NodeState;
+  lit: boolean;
+  columns: number;
+}) {
+  // `lit`: the last step is done and the line into the panel is drawing, so the panel and its cards build in.
+  const panel = reveal(lit);
+  return (
+    <div style={panel.style} className={cn('w-full rounded-xl border border-white/25 bg-white/8 p-3', panel.className)}>
+      <div className="mb-2.5 flex items-center justify-between gap-2">
+        <p className="text-micro font-semibold uppercase tracking-wide text-white/85">{deliverables.length} deliverables</p>
+        {/* Pops in once every deliverable is complete. */}
+        {state === 'done' && (
+          <span className="pill-pop inline-flex items-center gap-1 rounded-full bg-sand-300 px-2 py-0.5 text-micro font-semibold text-ink-950">
+            <CheckCircle2 aria-hidden="true" className="size-3" />
+            All ready
+          </span>
+        )}
+      </div>
+      <ul className={cn('grid gap-3', columns === 1 && 'pl-5')} style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
+        {deliverables.map((row, index) => {
+          const line = cn('absolute bg-white transition-opacity duration-500', lit ? 'opacity-90' : 'opacity-40');
+          const last = index === deliverables.length - 1;
+          return (
+            <li key={row.area} style={reveal(lit, LINE_MS + 100 + index * 100).style} className={cn('relative h-full', reveal(lit).className)}>
+              {columns === 1 && (
+                <>
+                  {/* Rail piece (bridges the gap above, stops at the middle of the last card) and branch into the card. */}
+                  <span aria-hidden="true" className={cn(line, '-left-3.5 w-px', index === 0 ? 'top-0' : '-top-3', last ? 'bottom-1/2' : 'bottom-0')} />
+                  <span aria-hidden="true" className={cn(line, '-left-3.5 top-1/2 h-px w-3.5')} />
+                </>
+              )}
+              <FlowNode icon={FileCheck2} title={row.area} meta="Deliverable" state={state} variant="deliverable" fill />
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
@@ -407,22 +486,34 @@ function FlowNode({
   meta,
   state,
   variant = 'step',
+  fill = false,
 }: {
   icon: LucideIcon;
   title: string;
   meta?: string;
   state: NodeState;
   variant?: 'step' | 'deliverable';
+  /** Fill the container (deliverables grid) instead of the fixed md:w-48 step width. */
+  fill?: boolean;
 }) {
   const pill = PILL[state];
   return (
     <div
       className={cn(
-        'relative w-full rounded-lg border bg-surface p-3 transition-[box-shadow,border-color,background-color] duration-500 ease-out-soft md:w-48',
+        'relative w-full rounded-lg border bg-surface p-3 transition-[box-shadow,border-color,background-color] duration-500 ease-out-soft',
+        // Deliverables fill their grid cell and match the tallest card in the row; the status line sits at the bottom.
+        // From md, step cards share one height (room for a three-line title) so cards in a row line up.
+        fill ? 'flex h-full flex-col' : 'md:flex md:min-h-[6.75rem] md:w-48 md:flex-col',
         state === 'active' ? 'node-glow border-sand-300 bg-linear-to-br from-surface to-sand-300/20' : 'border-transparent shadow-sm',
       )}
     >
-      <div className="flex items-center gap-2">
+      {/* Light sweeping across the step in progress. */}
+      {state === 'active' && (
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
+          <span className="node-shimmer absolute inset-0" />
+        </span>
+      )}
+      <div className="relative flex items-center gap-2">
         <span
           aria-hidden="true"
           className={cn(
@@ -434,9 +525,10 @@ function FlowNode({
         </span>
         <p className="min-w-0 text-caption font-semibold leading-snug text-fg">{title}</p>
       </div>
-      <div className="mt-2.5 flex items-center justify-between gap-2">
+      <div className={cn('relative mt-2.5 flex items-center justify-between gap-2', 'md:mt-auto md:pt-2.5', fill && 'mt-auto pt-2.5')}>
         <span className="min-w-0 text-micro text-fg-subtle md:truncate">{meta}</span>
-        <span className={cn('inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-micro font-semibold', pill.className)}>
+        {/* Keyed by state, so the pill pops each time it changes (Ready → In progress → Completed). */}
+        <span key={state} className={cn('pill-pop inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-micro font-semibold', pill.className)}>
           <pill.icon aria-hidden="true" className={cn('size-2.5', state === 'active' && 'animate-spin')} />
           {pill.label}
         </span>
@@ -448,11 +540,10 @@ function FlowNode({
 /** Parallel sub-steps under a node, linked by a short dashed drop. Brighten once the flow reaches the node. */
 function SubSteps({ items, lit }: { items: string[]; lit: boolean }) {
   return (
-    // Phones: indented under the card, hanging off a dashed rail from the card's bottom edge (like a tree), so they
-    // read as part of the step above rather than as steps of their own. From md: a short centred drop below the node.
-    <div className="mt-1 flex flex-col md:absolute md:inset-x-0 md:top-full md:mt-2 md:items-center">
-      <span aria-hidden="true" className="hidden h-3 border-l border-dashed border-white/60 md:block" />
-      <ul className="flex w-full flex-col gap-1.5 max-md:pl-8 max-md:pt-1.5">
+    // Indented under the card, hanging off a dashed rail from the card's bottom edge (like a tree), so they read as
+    // part of the step above rather than as steps of their own.
+    <div className="mt-1 flex flex-col">
+      <ul className="flex w-full flex-col gap-1.5 pl-8 pt-1.5">
         {items.map((item, index) => {
           const last = index === items.length - 1;
           return (
@@ -466,9 +557,9 @@ function SubSteps({ items, lit }: { items: string[]; lit: boolean }) {
               {/* Rail piece (from the card's bottom edge for the first item) and branch into the chip. */}
               <span
                 aria-hidden="true"
-                className={cn('absolute -left-4 border-l border-dashed border-white/70 md:hidden', index === 0 ? '-top-2.5' : '-top-1.5', last ? 'bottom-1/2' : 'bottom-0')}
+                className={cn('absolute -left-4 border-l border-dashed border-white/70', index === 0 ? '-top-2.5' : '-top-1.5', last ? 'bottom-1/2' : 'bottom-0')}
               />
-              <span aria-hidden="true" className="absolute -left-4 top-1/2 w-4 border-t border-dashed border-white/70 md:hidden" />
+              <span aria-hidden="true" className="absolute -left-4 top-1/2 w-4 border-t border-dashed border-white/70" />
               <CornerDownRight aria-hidden="true" className="size-3 shrink-0 text-accent-600" />
               {item}
             </li>
@@ -479,12 +570,13 @@ function SubSteps({ items, lit }: { items: string[]; lit: boolean }) {
   );
 }
 
-/** Thin connector with an arrowhead: vertical on phones, horizontal from md. */
-function Arrow({ lit }: { lit: boolean }) {
-  const opacity = lit ? 0.95 : 0.4;
+/** Phones: a short downward arrow between stacked steps. */
+function Arrow({ lit, flowing = false }: { lit: boolean; flowing?: boolean }) {
+  const opacity = lit ? 0.95 : 0;
   return (
-    <span aria-hidden="true" className="flex h-6 w-6 shrink-0 items-center justify-center md:h-auto md:w-10">
-      <svg viewBox="0 0 40 12" className="size-6 rotate-90 md:h-3 md:w-10 md:rotate-0">
+    <span aria-hidden="true" className="relative flex h-6 w-6 shrink-0 items-center justify-center">
+      {flowing && <span className="packet-run-y" />}
+      <svg viewBox="0 0 40 12" className="size-6 rotate-90">
         <line x1="0" y1="6" x2="34" y2="6" stroke="white" strokeOpacity={opacity} strokeWidth="1.5" className="transition-[stroke-opacity] duration-500" />
         <path d="M33 2 L39 6 L33 10 Z" fill="white" fillOpacity={opacity} className="transition-[fill-opacity] duration-500" />
       </svg>
@@ -492,28 +584,42 @@ function Arrow({ lit }: { lit: boolean }) {
   );
 }
 
-/** Phones: an arrow into the deliverables panel (its rail does the branching). From md: one line in, three curves out. */
-function BranchLines({ lit }: { lit: boolean }) {
-  const opacity = lit ? 0.95 : 0.4;
+/** From md: arrow between steps in a row, level with the card's middle; points left on reversed rows. */
+function SideArrow({ lit, reverse, flowing = false }: { lit: boolean; reverse: boolean; flowing?: boolean }) {
   return (
-    <>
-      <span className="md:hidden">
-        <Arrow lit={lit} />
-      </span>
-      <svg aria-hidden="true" viewBox="0 0 48 300" preserveAspectRatio="none" className="hidden w-12 shrink-0 self-stretch md:block">
-        {[50, 150, 250].map((y) => (
-          <path
-            key={y}
-            d={`M0 150 C 24 150, 24 ${y}, 48 ${y}`}
-            fill="none"
-            stroke="white"
-            strokeOpacity={opacity}
-            strokeWidth="1.5"
-            vectorEffect="non-scaling-stroke"
-            className="transition-[stroke-opacity] duration-500"
-          />
-        ))}
+    // Mirrored on reversed rows, so the line always draws from the step it leaves.
+    <span aria-hidden="true" className={cn('relative flex h-[6.75rem] w-10 shrink-0 items-center', reverse && '-scale-x-100')}>
+      {/* The line draws in when the step completes; the next card appears once it arrives. */}
+      <span
+        className={cn(
+          'absolute left-0 right-1.5 h-0.5 origin-left rounded-full bg-white transition-transform duration-250 ease-out-soft',
+          lit ? 'scale-x-100' : 'scale-x-0',
+        )}
+      />
+      <svg viewBox="0 0 6 8" className={cn('absolute right-0 h-2.5 w-2 transition-opacity duration-300', lit ? 'opacity-100 delay-200' : 'opacity-0')}>
+        <path d="M0 0 L6 4 L0 8 Z" fill="white" />
       </svg>
-    </>
+      {flowing && <span className="packet-run-x" />}
+    </span>
+  );
+}
+
+/** From md: a line from the bottom of a row's last card down into the next row (or the deliverables). */
+function DropLine({ lit, flowing = false }: { lit: boolean; flowing?: boolean }) {
+  return (
+    // Column flex, so the line grows downwards (not sideways) to fill the space under the card.
+    <span aria-hidden="true" className="relative -mb-6 mt-2 flex min-h-8 flex-1 flex-col items-center">
+      {/* The line draws downwards when the step completes; the next card appears once it arrives. */}
+      <span
+        className={cn(
+          'absolute bottom-2 top-0 w-0.5 origin-top rounded-full bg-white transition-transform duration-250 ease-out-soft',
+          lit ? 'scale-y-100' : 'scale-y-0',
+        )}
+      />
+      {flowing && <span className="packet-run-y" />}
+      <svg viewBox="0 0 10 6" className={cn('absolute bottom-0 h-2 w-2.5 transition-opacity duration-300', lit ? 'opacity-100 delay-200' : 'opacity-0')}>
+        <path d="M0 0 H10 L5 6 Z" fill="white" />
+      </svg>
+    </span>
   );
 }

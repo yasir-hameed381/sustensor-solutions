@@ -488,14 +488,14 @@
 
 /* A data pulse travelling along a connector (compliverse cv-packet). Vertical by default, horizontal from lg. */
 @keyframes packet-y {
-  0% { top: 0; opacity: 0; }
+  0% { top: -4px; opacity: 0; }
   12%, 88% { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
+  100% { top: calc(100% - 4px); opacity: 0; }
 }
 @keyframes packet-x {
-  0% { left: 0; opacity: 0; }
+  0% { left: -4px; opacity: 0; }
   12%, 88% { opacity: 1; }
-  100% { left: 100%; opacity: 0; }
+  100% { left: calc(100% - 4px); opacity: 0; }
 }
 .animate-packet {
   position: absolute;
@@ -519,6 +519,56 @@
   transform: perspective(520px) rotateX(62deg);
   transform-origin: bottom;
   mask-image: radial-gradient(ellipse 55% 85% at 50% 100%, #000 25%, transparent 75%);
+}
+
+/* ---------- Workflow demo ---------- */
+/* A data dot running once along a connector into the step that has just started (replays per stage). */
+@keyframes packet-run-x {
+  from { left: 0; opacity: 0; }
+  15%, 85% { opacity: 1; }
+  to { left: calc(100% - 8px); opacity: 0; }
+}
+@keyframes packet-run-y {
+  from { top: 0; opacity: 0; }
+  15%, 85% { opacity: 1; }
+  to { top: calc(100% - 8px); opacity: 0; }
+}
+.packet-run-x,
+.packet-run-y {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--color-sand-300);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-sand-300) 35%, transparent), 0 0 12px 2px var(--color-sand-300);
+}
+.packet-run-x {
+  top: calc(50% - 4px);
+  animation: packet-run-x 450ms var(--ease-in-out-soft) both;
+}
+.packet-run-y {
+  left: calc(50% - 4px);
+  animation: packet-run-y 450ms var(--ease-in-out-soft) both;
+}
+
+/* Light sweeping across the step in progress. */
+@keyframes node-shimmer {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(110%); }
+}
+.node-shimmer {
+  background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 0.65) 50%, transparent 80%);
+  animation: node-shimmer 1.6s var(--ease-in-out-soft) infinite;
+}
+
+/* Status pill / badge popping in when it changes. */
+@keyframes pill-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.pill-pop {
+  animation: pill-pop 420ms var(--ease-out-soft) both;
 }
 
 /* Gentle hover-free float (floating mockup chip). */
@@ -727,6 +777,54 @@
 }
 .animate-orbit {
   animation: orbit-spin 60s linear infinite;
+}
+
+/* ==========================================================================
+   Scroll performance (all screen sizes)
+   - Soft glows are circles with feathered edges via a radial mask, not a blur filter: same look, but nothing to
+     re-blur when they animate or the page scrolls.
+   - No backdrop blur: it re-renders whatever scrolls behind it every frame. Panels keep their translucent colour.
+   - The scroll reveal fades and slides only (no blur filter on large blocks).
+   - Animations inside sections that are off screen are paused (`.is-offscreen`, set by useOffscreenPause).
+   ========================================================================== */
+.rounded-full.blur-3xl,
+.rounded-full.blur-2xl {
+  filter: none !important;
+  mask-image: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.55) 45%, transparent 100%);
+}
+*,
+*::before,
+*::after {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+header.fixed {
+  background-color: var(--color-surface);
+}
+[data-reveal] {
+  transition-property: opacity, transform;
+}
+.js [data-reveal]:not(.is-visible) {
+  filter: none;
+}
+.is-offscreen *,
+.is-offscreen *::before,
+.is-offscreen *::after {
+  animation-play-state: paused !important;
+}
+
+/* Phones and tablets: infinite effects that repaint every frame are shown static. */
+@media (width < 64rem) {
+  .border-spin,
+  .animate-glow-pulse,
+  .animate-aurora,
+  .animate-ping,
+  .animate-radar-ping {
+    animation: none !important;
+  }
+  .animate-ping {
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
